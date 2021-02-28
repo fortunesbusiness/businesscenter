@@ -26,10 +26,10 @@ mongoose.connect(DB_URI,()=>{
 });
 
 //cloudinary configuration
-cloudinary.config({
-    cloud_name: 'dzywuv120',
-    api_key: '383977439748697',
-    api_secret: 'N_66lZPmjQqdEkx0Rcs5iKHnimg'
+cloudinary.config({ 
+  cloud_name: 'dbefofzqn', 
+  api_key: '685581139743957', 
+  api_secret: 'KZMOdAMwbuNw6pOJHrDq_nsig4Y' 
 });
 
 //initialize helper libraries
