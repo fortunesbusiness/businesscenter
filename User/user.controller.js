@@ -55,11 +55,11 @@ module.exports.register = async (req, res) => {
         if (error) return res.status(400).send({
             message: "Something went wrong"
         });
-        cloudinary.config({
-            cloud_name: 'dzywuv120',
-            api_key: '383977439748697',
-            api_secret: 'N_66lZPmjQqdEkx0Rcs5iKHnimg'
-        })
+        cloudinary.config({ 
+  cloud_name: 'dbefofzqn', 
+  api_key: '685581139743957', 
+  api_secret: 'KZMOdAMwbuNw6pOJHrDq_nsig4Y' 
+});
 
         //destruct body objects
         const {
