@@ -375,7 +375,7 @@ module.exports.rejectUser = async (req, res) => {
 module.exports.registeredMemberList = async (req, res) => {
     const user = await User.find({
         is_approved: true
-    }, ).sort({
+    }).sort({
         '_id': -1
     });
     res.status(200).send(user);
@@ -571,7 +571,7 @@ module.exports.investForSpecificUser = async (req, res) => {
         month,
         year
     } = req.body;
-
+    console.log(req.body);
     const user = await User.findOne({
         _id: id
     }).select({
@@ -589,11 +589,7 @@ module.exports.investForSpecificUser = async (req, res) => {
     let userInvestmentRecord;
     let totalInvestmentRecord;
     if (area == 'Food') {
-        userInvestmentRecord = await User.findOne({
-            _id: id
-        }).select({
-            'food_investment_amount': 1
-        });
+        userInvestmentRecord = await User.findOne({_id: id}).select({'food_investment_amount': 1});
         totalInvestmentRecord = await Investment.findOne({
             id: "businessCenter22"
         }).select({
@@ -602,9 +598,13 @@ module.exports.investForSpecificUser = async (req, res) => {
         });
         if (!userInvestmentRecord.food_investment_amount) {
             userInvestmentRecord.food_investment_amount = Number(amount);
+            totalInvestmentRecord.foodInvestmentAmount = Number(totalInvestmentRecord.foodInvestmentAmount) + Number(amount);
+            // console.log(totalInvestmentRecord.foodInvestmentAmount);
+            totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
         } else {
             userInvestmentRecord.food_investment_amount = Number(userInvestmentRecord.food_investment_amount) + Number(amount);
             totalInvestmentRecord.foodInvestmentAmount = Number(totalInvestmentRecord.foodInvestmentAmount) + Number(amount);
+            // console.log(totalInvestmentRecord.foodInvestmentAmount);
             totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
         }
     } else if (area == 'Health') {
@@ -621,6 +621,8 @@ module.exports.investForSpecificUser = async (req, res) => {
         });
         if (!userInvestmentRecord.health_investment_amount) {
             userInvestmentRecord.health_investment_amount = Number(amount);
+            totalInvestmentRecord.healthInvestmentAmount = Number(totalInvestmentRecord.healthInvestmentAmount) + Number(amount);
+            totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
         } else {
             userInvestmentRecord.health_investment_amount = Number(userInvestmentRecord.health_investment_amount) + Number(amount);
             totalInvestmentRecord.healthInvestmentAmount = Number(totalInvestmentRecord.healthInvestmentAmount) + Number(amount);
@@ -640,6 +642,8 @@ module.exports.investForSpecificUser = async (req, res) => {
         });
         if (!userInvestmentRecord.garments_investment_amount) {
             userInvestmentRecord.garments_investment_amount = Number(amount);
+            totalInvestmentRecord.garmentsInvestmentAmount = Number(totalInvestmentRecord.garmentsInvestmentAmount) + Number(amount);
+            totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
         } else {
             userInvestmentRecord.garments_investment_amount = Number(userInvestmentRecord.garments_investment_amount) + Number(amount);
             totalInvestmentRecord.garmentsInvestmentAmount = Number(totalInvestmentRecord.garmentsInvestmentAmount) + Number(amount);
@@ -659,6 +663,8 @@ module.exports.investForSpecificUser = async (req, res) => {
         });
         if (!userInvestmentRecord.education_investment_amount) {
             userInvestmentRecord.education_investment_amount = Number(amount);
+            totalInvestmentRecord.educationInvestmentAmount = Number(totalInvestmentRecord.educationInvestmentAmount) + Number(amount);
+            totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
         } else {
             userInvestmentRecord.education_investment_amount = Number(userInvestmentRecord.education_investment_amount) + Number(amount);
             totalInvestmentRecord.educationInvestmentAmount = Number(totalInvestmentRecord.educationInvestmentAmount) + Number(amount);
@@ -678,6 +684,8 @@ module.exports.investForSpecificUser = async (req, res) => {
         });
         if (!userInvestmentRecord.vehicle_investment_amount) {
             userInvestmentRecord.vehicle_investment_amount = Number(amount);
+            totalInvestmentRecord.vehicleInvestmentAmount = Number(totalInvestmentRecord.vehicleInvestmentAmount) + Number(amount);
+            totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
         } else {
             userInvestmentRecord.vehicle_investment_amount = Number(userInvestmentRecord.vehicle_investment_amount) + Number(amount);
             totalInvestmentRecord.vehicleInvestmentAmount = Number(totalInvestmentRecord.vehicleInvestmentAmount) + Number(amount);
@@ -697,6 +705,8 @@ module.exports.investForSpecificUser = async (req, res) => {
         });
         if (!userInvestmentRecord.residence_investment_amount) {
             userInvestmentRecord.residence_investment_amount = Number(amount);
+            totalInvestmentRecord.residenceInvestmentAmount = Number(totalInvestmentRecord.residenceInvestmentAmount) + Number(amount);
+            totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
         } else {
             userInvestmentRecord.residence_investment_amount = Number(userInvestmentRecord.residence_investment_amount) + Number(amount);
             totalInvestmentRecord.residenceInvestmentAmount = Number(totalInvestmentRecord.residenceInvestmentAmount) + Number(amount);
@@ -765,7 +775,7 @@ module.exports.getInvestmentRecord = async (req, res) => {
         residence,
         total
     }
-
+    // console.log(result);
     res.status(200).send(result);
 }
 
