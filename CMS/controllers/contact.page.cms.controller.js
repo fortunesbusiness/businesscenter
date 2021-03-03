@@ -108,13 +108,13 @@ module.exports.addContactSectionImage = async(req,res)=>{
 //method to get information
 module.exports.getContactInformation = async(req,res)=>{
     const house = await Contact.find().select({'house': 1}).limit(1).sort({'house': -1});
-    const phone = await Contact.find().select({'phone': 1}).limit(1).sort({'phone': -1});
+    const phone = await Contact.find().select({'phone': 1}).sort({'phone': -1});
     const email = await Contact.find().select({'email': 1}).limit(1).sort({'email': -1});
     const image = await Contact.find().select({'image': 1}).limit(1).sort({'image': -1});
 
     const result = {
         house: house[0].house,
-        phone: phone[0].phone,
+        phone: phone,
         email: email[0].email,
         image: image[0].image
     }

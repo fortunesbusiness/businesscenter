@@ -24,6 +24,10 @@ router.get('/count/totalrequesteduser',userController.getTotalRequestedUserCount
 router.post('/invest',userController.investForSpecificUser);
 router.get('/investment/record',verifyUser,userController.getInvestmentRecord);
 router.post('/upgrade/membership',verifyUser,userController.membershipUpgradeRequest);
-router.post('/accept/upgrade/membership',verifyAdmin,userController.acceptMembershipUpgradgeRequest);
-router.post('/delete/upgrade/membership',verifyAdmin,userController.deleteMembershipUpgradgeRequest);
+router.post('/accept/membershipupgraderequest',verifyAdmin,userController.acceptMembershipUpgradgeRequest);
+router.post('/delete/membershipupgraderequest',verifyAdmin,userController.deleteMembershipUpgradgeRequest);
+router.get('/membershipupgradge/request/count',verifyAdmin,userController.membershipUpgradgeRequestCount);
+router.get('/membership/request',verifyAdmin,userController.membershipUpgradgeRequestList);
+
+
 module.exports = router;

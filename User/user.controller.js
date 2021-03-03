@@ -13,7 +13,9 @@ const {
 } = require('../middleware/validate.user');
 const multer = require('multer');
 //method to delete directory
-const {deleteUploadDirectory} = require('../Utility/delete.directory');
+const {
+    deleteUploadDirectory
+} = require('../Utility/delete.directory');
 
 //cloudinary integration
 const cloudinary = require('cloudinary').v2;
@@ -55,11 +57,12 @@ module.exports.register = async (req, res) => {
         if (error) return res.status(400).send({
             message: "Something went wrong"
         });
+        //cloudinary configuration
         cloudinary.config({ 
-  cloud_name: 'dbefofzqn', 
-  api_key: '685581139743957', 
-  api_secret: 'KZMOdAMwbuNw6pOJHrDq_nsig4Y' 
-});
+            cloud_name: 'dzywuv120', 
+            api_key: '383977439748697', 
+            api_secret: 'N_66lZPmjQqdEkx0Rcs5iKHnimg' 
+        });
 
         //destruct body objects
         const {
@@ -128,7 +131,7 @@ module.exports.register = async (req, res) => {
                             callback(null, response.url);
                         })
                 }
-            }, async(error, result) => {
+            }, async (error, result) => {
                 const saveInformationToDatabase = async () => {
                     //if not exits create new account
                     const hashedPassword = await hashPassword(password);
@@ -198,7 +201,9 @@ module.exports.login = async (req, res) => {
         message: `Sorry you've provided wrong id or password`
     });
     //check if user is approved
-    if(!user.is_approved) return res.status(404).send({message: 'Wrong credential or approval pending'});
+    if (!user.is_approved) return res.status(404).send({
+        message: 'Wrong credential or approval pending'
+    });
 
     //check if provided password matches or not
     const passwordMatched = await comparePassword(password, user.password);
@@ -233,96 +238,146 @@ module.exports.profile = async (req, res) => {
 
 //method to get registered user profile
 module.exports.requestedUserList = async (req, res) => {
-    const user = await User.find({is_approved: false}).sort({'_id': -1});
+    const user = await User.find({
+        is_approved: false
+    }).sort({
+        '_id': -1
+    });
     res.status(200).send(user);
 }
 //method to update user email
-module.exports.updateEmail = async(req,res)=>{
-    const {_id} = req.user;
-    const user = await User.findOne({_id});
+module.exports.updateEmail = async (req, res) => {
+    const {
+        _id
+    } = req.user;
+    const user = await User.findOne({
+        _id
+    });
     user.email_address = req.body.data;
 
-    try{
+    try {
         await user.save();
-        res.status(200).send({'message':'Email Updated Succesfully'});
-    }
-    catch(error){
-        res.status(400).send({'message':'Something went wrong!'});
+        res.status(200).send({
+            'message': 'Email Updated Succesfully'
+        });
+    } catch (error) {
+        res.status(400).send({
+            'message': 'Something went wrong!'
+        });
     }
 }
 //method to update user phone
-module.exports.updatePhone = async(req,res)=>{
-    const {_id} = req.user;
-    const user = await User.findOne({_id});
+module.exports.updatePhone = async (req, res) => {
+    const {
+        _id
+    } = req.user;
+    const user = await User.findOne({
+        _id
+    });
     user.phone_number = req.body.data;
     // console.log(req.body.data);
-    try{
+    try {
         await user.save();
-        res.status(200).send({'message':'Phone Number Updated Succesfully'});
-    }
-    catch(error){
+        res.status(200).send({
+            'message': 'Phone Number Updated Succesfully'
+        });
+    } catch (error) {
         // console.log(error);
-        res.status(400).send({'message':'Something went wrong!'});
+        res.status(400).send({
+            'message': 'Something went wrong!'
+        });
     }
 }
 //method to update spouse infromation
-module.exports.updateSpouseInformation = async(req,res)=>{
-    const {_id} = req.user;
-    const user = await User.findOne({_id});
+module.exports.updateSpouseInformation = async (req, res) => {
+    const {
+        _id
+    } = req.user;
+    const user = await User.findOne({
+        _id
+    });
     user.spouse_name = req.body.data;
 
-    try{
+    try {
         await user.save();
-        res.status(200).send({'message':'Spouse Infromation updated succesfully'});
-    }
-    catch(error){
-        res.status(400).send({'message':'Something went wrong!'});
+        res.status(200).send({
+            'message': 'Spouse Infromation updated succesfully'
+        });
+    } catch (error) {
+        res.status(400).send({
+            'message': 'Something went wrong!'
+        });
     }
 }
 //method to update present address
-module.exports.updatePresentAddress = async(req,res)=>{
-    const {_id} = req.user;
-    const user = await User.findOne({_id});
+module.exports.updatePresentAddress = async (req, res) => {
+    const {
+        _id
+    } = req.user;
+    const user = await User.findOne({
+        _id
+    });
     user.present_address = req.body.data;
 
-    try{
+    try {
         await user.save();
-        res.status(200).send({'message':'Present Address Infromation updated succesfully'});
-    }
-    catch(error){
-        res.status(400).send({'message':'Something went wrong!'});
+        res.status(200).send({
+            'message': 'Present Address Infromation updated succesfully'
+        });
+    } catch (error) {
+        res.status(400).send({
+            'message': 'Something went wrong!'
+        });
     }
 }
 //method to approve a user
-module.exports.approveUser = async(req,res)=>{
-    const {_id} = req.body;
-    const user = await User.findOne({_id});
+module.exports.approveUser = async (req, res) => {
+    const {
+        _id
+    } = req.body;
+    const user = await User.findOne({
+        _id
+    });
     user.is_approved = true;
 
-    try{
+    try {
         await user.save();
-        res.status(200).send({message: `User Approved!`});
-    }
-    catch(error){
-        res.status(400).send({message: 'Something went wrong! Please contact the developer!'});
+        res.status(200).send({
+            message: `User Approved!`
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please contact the developer!'
+        });
     }
 }
 
 //method to reject a member request
-module.exports.rejectUser = async(req,res)=>{
-    const {id} = req.body;
+module.exports.rejectUser = async (req, res) => {
+    const {
+        id
+    } = req.body;
 
-    try{
-        await User.findOneAndRemove({_id: id});
-        res.status(200).send({message: `User Rejected!`});
-    }
-    catch(error){
-        res.status(400).send({message: 'Something went wrong! Please contact the developer!'});
+    try {
+        await User.findOneAndRemove({
+            _id: id
+        });
+        res.status(200).send({
+            message: `User Rejected!`
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please contact the developer!'
+        });
     }
 }
 //method to get registered member list
-module.exports.registeredMemberList = async(req,res)=>{
-    const user = await User.find({is_approved: true},).sort({'_id': -1});
+module.exports.registeredMemberList = async (req, res) => {
+    const user = await User.find({
+        is_approved: true
+    }, ).sort({
+        '_id': -1
+    });
     res.status(200).send(user);
 }
 //method to get user according member type
@@ -336,15 +391,22 @@ module.exports.registeredMemberListAccordingMemberType = async (req, res) => {
     res.status(200).send(user);
 }
 //method to get user dashboard information total amount, last payment date and amount
-module.exports.getUserDashboard = async(req,res)=>{
-    const {_id} = req.user;
+module.exports.getUserDashboard = async (req, res) => {
+    const {
+        _id
+    } = req.user;
     // const _id = '5fff4cf8c2978f4470554f39';
-    const user = await User.findOne({_id}).select({'total_deposited_amount': 1,'payment_status': 1}).limit(1);
+    const user = await User.findOne({
+        _id
+    }).select({
+        'total_deposited_amount': 1,
+        'payment_status': 1
+    }).limit(1);
     const length = user.payment_status.length;
     let result = {
         total_deposited_amount: user.total_deposited_amount,
         last_payment: {
-            amount: user.payment_status[length-1].amount,
+            amount: user.payment_status[length - 1].amount,
             date: `${user.payment_status[length-1].month_name},${user.payment_status[length-1].year}`
         }
     };
@@ -353,67 +415,111 @@ module.exports.getUserDashboard = async(req,res)=>{
     res.send(result);
 }
 //method to add bonus or profit for a specific user
-module.exports.addProfit = async(req,res)=>{
-    const {_id,profit_amount,profit_percentage,month_name,year} = req.body;
+module.exports.addProfit = async (req, res) => {
+    const {
+        _id,
+        profit_amount,
+        profit_percentage,
+        month_name,
+        year
+    } = req.body;
     // console.log(req.body);
-    const totalAmount = await updateSpecificUserTotalDepositAmount(_id,profit_amount);
-    if(!totalAmount) return res.status(400).send({message:'Something went wrong!'});
+    // const totalAmount = await updateSpecificUserTotalDepositAmount(_id, profit_amount);
+    // if (!totalAmount) return res.status(400).send({
+    //     message: 'Something went wrong!'
+    // });
     // console.log(totalAmount); 
-    
-    try{
-        await User.findOneAndUpdate({_id}, {
+    let netProfit;
+    const userProfit = await User.findOne({_id}).select({total_profit: 1});
+    if(!userProfit.total_profit) netProfit = Number(profit_amount);
+    else netProfit = Number(profit_amount) + Number(userProfit.total_profit);
+    userProfit.total_profit = netProfit;
+
+    try {
+        await userProfit.save();
+        await User.findOneAndUpdate({
+            _id
+        }, {
             $push: {
                 profit: {
                     month_name: month_name,
                     amount: profit_amount,
                     year: year,
                     percentage: profit_percentage,
-                    total_deposit_amount: totalAmount
+                    total_profit_amount: netProfit
                 }
             }
         });
-        res.status(200).send({message: 'Profit added!'});
-    }
-    catch(error){
-        res.status(400).send({message: 'Something went wrong! Please contact the developeer!'});
+        res.status(200).send({
+            message: 'Profit added!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please contact the developeer!'
+        });
     }
     // console.log(req.body);
 }
 //method to update user total deposit
-const updateSpecificUserTotalDepositAmount = async(_id,amount)=>{
-    const user = await User.findOne({_id}).select({total_deposited_amount: 1});
+const updateSpecificUserTotalDepositAmount = async (_id, amount) => {
+    const user = await User.findOne({
+        _id
+    }).select({
+        total_deposited_amount: 1
+    });
     let totalAmount = Number(amount) + Number(user.total_deposited_amount);
     // console.log(amount);
     // console.log(user);
     // console.log(user.total_deposited_amount);
     user.total_deposited_amount = totalAmount;
 
-    try{
+    try {
         await user.save();
         return totalAmount;
-    }
-    catch(error){
-        console.log(error);
+    } catch (error) {
+        // console.log(error);
         return false;
     }
 
 }
 //method to get profit for a specific user
-module.exports.getProfit = async(req,res)=>{
-    const {_id} = req.user;
+module.exports.getProfit = async (req, res) => {
+    const {
+        _id
+    } = req.user;
     // const _id = "5fff4cf8c2978f4470554f39";
-    const user = await User.findOne({_id}).select({'profit': 1});
-    res.status(200).send(user.profit);
+    const user = await User.findOne({
+        _id
+    }).select({
+        'profit': 1
+    });
+    const sortedData = user.profit.sort((a,b)=> (b.total_profit_amount) - (a.total_profit_amount))
+    // console.log(sortedData);
+    res.status(200).send(sortedData);
     // res.send(user);
 }
 
 //method to get total number of registered user (general,premium,associate,well wisher)
-module.exports.getTotalRegisteredUserCount = async(req,res)=>{
-    const premiumUserCount = await User.find({is_approved: true,member_type: 'PREMIUM'}).count();
-    const generalUserCount = await User.find({is_approved: true,member_type: 'GENERAL'}).count();
-    const associateUserCount = await User.find({is_approved: true,member_type: 'ASSOCIATE'}).count();
-    const wellWisherUserCount = await User.find({is_approved: true,member_type: 'WELL WISHER'}).count();
-    const totalRegistered = await User.find({is_approved: true}).count();
+module.exports.getTotalRegisteredUserCount = async (req, res) => {
+    const premiumUserCount = await User.find({
+        is_approved: true,
+        member_type: 'PREMIUM'
+    }).count();
+    const generalUserCount = await User.find({
+        is_approved: true,
+        member_type: 'GENERAL'
+    }).count();
+    const associateUserCount = await User.find({
+        is_approved: true,
+        member_type: 'ASSOCIATE'
+    }).count();
+    const wellWisherUserCount = await User.find({
+        is_approved: true,
+        member_type: 'WELL WISHER'
+    }).count();
+    const totalRegistered = await User.find({
+        is_approved: true
+    }).count();
     const userCount = {
         general: generalUserCount,
         premium: premiumUserCount,
@@ -425,12 +531,26 @@ module.exports.getTotalRegisteredUserCount = async(req,res)=>{
 }
 
 //method to get total number of requested user (general,premium,associate,well wisher)
-module.exports.getTotalRequestedUserCount = async(req,res)=>{
-    const premiumUserCount = await User.find({is_approved: false,member_type: 'PREMIUM'}).count();
-    const generalUserCount = await User.find({is_approved: false,member_type: 'GENERAL'}).count();
-    const associateUserCount = await User.find({is_approved: false,member_type: 'ASSOCIATE'}).count();
-    const wellWisherUserCount = await User.find({is_approved: false,member_type: 'WELL WISHER'}).count();
-    const totalRegistered = await User.find({is_approved: false}).count();
+module.exports.getTotalRequestedUserCount = async (req, res) => {
+    const premiumUserCount = await User.find({
+        is_approved: false,
+        member_type: 'PREMIUM'
+    }).count();
+    const generalUserCount = await User.find({
+        is_approved: false,
+        member_type: 'GENERAL'
+    }).count();
+    const associateUserCount = await User.find({
+        is_approved: false,
+        member_type: 'ASSOCIATE'
+    }).count();
+    const wellWisherUserCount = await User.find({
+        is_approved: false,
+        member_type: 'WELL WISHER'
+    }).count();
+    const totalRegistered = await User.find({
+        is_approved: false
+    }).count();
     const userCount = {
         general: generalUserCount,
         premium: premiumUserCount,
@@ -442,87 +562,153 @@ module.exports.getTotalRequestedUserCount = async(req,res)=>{
 }
 
 //method to add amount to invetment area for specific user
-module.exports.investForSpecificUser = async(req,res)=>{
-    const {area,amount,fortunesBusinessId,id,month,year} = req.body;
-    
-    const user = await User.findOne({_id: id}).select({'total_invested_amount': 1});
+module.exports.investForSpecificUser = async (req, res) => {
+    const {
+        area,
+        amount,
+        fortunesBusinessId,
+        id,
+        month,
+        year
+    } = req.body;
+
+    const user = await User.findOne({
+        _id: id
+    }).select({
+        'total_invested_amount': 1
+    });
     let totalInvestment = user.total_invested_amount;
-    (!totalInvestment) ? totalInvestment = amount : totalInvestment = Number(totalInvestment) + Number(amount);
+    (!totalInvestment) ? totalInvestment = amount: totalInvestment = Number(totalInvestment) + Number(amount);
     // const investment = user.investment;
     user.total_invested_amount = totalInvestment;
     // const investmentList = await User.find({_id:id},{investment: {$elemMatch: {area: area}}});
     // console.log(investmentList.investment.area);
     // console.log(totalInvestment);
     // console.log(investment);
-    
+
     let userInvestmentRecord;
     let totalInvestmentRecord;
-    if(area=='Food'){
-        userInvestmentRecord = await User.findOne({_id: id}).select({'food_investment_amount': 1});
-        totalInvestmentRecord = await Investment.findOne({id: "businessCenter22"}).select({'foodInvestmentAmount': 1,'totalInvestment': 1});
-        if(!userInvestmentRecord.food_investment_amount){
+    if (area == 'Food') {
+        userInvestmentRecord = await User.findOne({
+            _id: id
+        }).select({
+            'food_investment_amount': 1
+        });
+        totalInvestmentRecord = await Investment.findOne({
+            id: "businessCenter22"
+        }).select({
+            'foodInvestmentAmount': 1,
+            'totalInvestment': 1
+        });
+        if (!userInvestmentRecord.food_investment_amount) {
             userInvestmentRecord.food_investment_amount = Number(amount);
-        }else{
+        } else {
             userInvestmentRecord.food_investment_amount = Number(userInvestmentRecord.food_investment_amount) + Number(amount);
             totalInvestmentRecord.foodInvestmentAmount = Number(totalInvestmentRecord.foodInvestmentAmount) + Number(amount);
             totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
-        } 
-    }else if(area=='Health'){
-        userInvestmentRecord = await User.findOne({_id: id}).select({'health_investment_amount': 1});
-        totalInvestmentRecord = await Investment.findOne({id: "businessCenter22"}).select({'healthInvestmentAmount': 1,'totalInvestment': 1});
-        if(!userInvestmentRecord.health_investment_amount){
+        }
+    } else if (area == 'Health') {
+        userInvestmentRecord = await User.findOne({
+            _id: id
+        }).select({
+            'health_investment_amount': 1
+        });
+        totalInvestmentRecord = await Investment.findOne({
+            id: "businessCenter22"
+        }).select({
+            'healthInvestmentAmount': 1,
+            'totalInvestment': 1
+        });
+        if (!userInvestmentRecord.health_investment_amount) {
             userInvestmentRecord.health_investment_amount = Number(amount);
-        }else{
+        } else {
             userInvestmentRecord.health_investment_amount = Number(userInvestmentRecord.health_investment_amount) + Number(amount);
             totalInvestmentRecord.healthInvestmentAmount = Number(totalInvestmentRecord.healthInvestmentAmount) + Number(amount);
             totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
-        } 
-    }else if(area=='Cloths/Garments'){
-        userInvestmentRecord = await User.findOne({_id: id}).select({'garments_investment_amount': 1});
-        totalInvestmentRecord = await Investment.findOne({id: "businessCenter22"}).select({'garmentsInvestmentAmount': 1,'totalInvestment': 1});
-        if(!userInvestmentRecord.garments_investment_amount){
+        }
+    } else if (area == 'Cloths/Garments') {
+        userInvestmentRecord = await User.findOne({
+            _id: id
+        }).select({
+            'garments_investment_amount': 1
+        });
+        totalInvestmentRecord = await Investment.findOne({
+            id: "businessCenter22"
+        }).select({
+            'garmentsInvestmentAmount': 1,
+            'totalInvestment': 1
+        });
+        if (!userInvestmentRecord.garments_investment_amount) {
             userInvestmentRecord.garments_investment_amount = Number(amount);
-        }else{
+        } else {
             userInvestmentRecord.garments_investment_amount = Number(userInvestmentRecord.garments_investment_amount) + Number(amount);
             totalInvestmentRecord.garmentsInvestmentAmount = Number(totalInvestmentRecord.garmentsInvestmentAmount) + Number(amount);
             totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
-        } 
-    }else if(area=='Education'){
-        userInvestmentRecord = await User.findOne({_id: id}).select({'education_investment_amount': 1});
-        totalInvestmentRecord = await Investment.findOne({id: "businessCenter22"}).select({'educationInvestmentAmount': 1,'totalInvestment': 1});
-        if(!userInvestmentRecord.education_investment_amount){
+        }
+    } else if (area == 'Education') {
+        userInvestmentRecord = await User.findOne({
+            _id: id
+        }).select({
+            'education_investment_amount': 1
+        });
+        totalInvestmentRecord = await Investment.findOne({
+            id: "businessCenter22"
+        }).select({
+            'educationInvestmentAmount': 1,
+            'totalInvestment': 1
+        });
+        if (!userInvestmentRecord.education_investment_amount) {
             userInvestmentRecord.education_investment_amount = Number(amount);
-        }else{
+        } else {
             userInvestmentRecord.education_investment_amount = Number(userInvestmentRecord.education_investment_amount) + Number(amount);
             totalInvestmentRecord.educationInvestmentAmount = Number(totalInvestmentRecord.educationInvestmentAmount) + Number(amount);
             totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
-        } 
-    }else if(area=='Vehicle'){
-        userInvestmentRecord = await User.findOne({_id: id}).select({'vehicle_investment_amount': 1});
-        totalInvestmentRecord = await Investment.findOne({id: "businessCenter22"}).select({'vehicleInvestmentAmount': 1,'totalInvestment': 1});
-        if(!userInvestmentRecord.vehicle_investment_amount){
+        }
+    } else if (area == 'Vehicle') {
+        userInvestmentRecord = await User.findOne({
+            _id: id
+        }).select({
+            'vehicle_investment_amount': 1
+        });
+        totalInvestmentRecord = await Investment.findOne({
+            id: "businessCenter22"
+        }).select({
+            'vehicleInvestmentAmount': 1,
+            'totalInvestment': 1
+        });
+        if (!userInvestmentRecord.vehicle_investment_amount) {
             userInvestmentRecord.vehicle_investment_amount = Number(amount);
-        }else{
+        } else {
             userInvestmentRecord.vehicle_investment_amount = Number(userInvestmentRecord.vehicle_investment_amount) + Number(amount);
             totalInvestmentRecord.vehicleInvestmentAmount = Number(totalInvestmentRecord.vehicleInvestmentAmount) + Number(amount);
             totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
-        } 
-    }
-    else if(area=='Residence'){
-        userInvestmentRecord = await User.findOne({_id: id}).select({'residence_investment_amount': 1});
-        totalInvestmentRecord = await Investment.findOne({id: "businessCenter22"}).select({'residenceInvestmentAmount': 1,'totalInvestment': 1});
-        if(!userInvestmentRecord.residence_investment_amount){
+        }
+    } else if (area == 'Residence') {
+        userInvestmentRecord = await User.findOne({
+            _id: id
+        }).select({
+            'residence_investment_amount': 1
+        });
+        totalInvestmentRecord = await Investment.findOne({
+            id: "businessCenter22"
+        }).select({
+            'residenceInvestmentAmount': 1,
+            'totalInvestment': 1
+        });
+        if (!userInvestmentRecord.residence_investment_amount) {
             userInvestmentRecord.residence_investment_amount = Number(amount);
-        }else{
+        } else {
             userInvestmentRecord.residence_investment_amount = Number(userInvestmentRecord.residence_investment_amount) + Number(amount);
             totalInvestmentRecord.residenceInvestmentAmount = Number(totalInvestmentRecord.residenceInvestmentAmount) + Number(amount);
             totalInvestmentRecord.totalInvestment = Number(totalInvestmentRecord.totalInvestment) + Number(amount);
-        } 
+        }
     }
-    try{
-        await User.findOneAndUpdate({_id: id},{
+    try {
+        await User.findOneAndUpdate({
+            _id: id
+        }, {
             $push: {
-                investment:{
+                investment: {
                     area: area,
                     amount: amount,
                     month: month,
@@ -533,39 +719,43 @@ module.exports.investForSpecificUser = async(req,res)=>{
         await user.save();
         await userInvestmentRecord.save();
         await totalInvestmentRecord.save();
-        res.status(200).send({message: 'Investment successfully done!'});
+        res.status(200).send({
+            message: 'Investment successfully done!'
+        });
         // console.log(done);
-    }
-    catch(error){
+    } catch (error) {
         console.log(error);
         res.status(400).send(error);
     }
 
 }
 //method to get investment record for a specific user
-module.exports.getInvestmentRecord = async(req,res)=>{
-    const {_id} = req.user;
-    const investmentList = await User.findById({_id})
-                    .select(
-                        {
-                            'food_investment_amount': 1,
-                            'health_investment_amount': 1,
-                            'education_investment_amount': 1,
-                            'vehicle_investment_amount': 1,
-                            'garments_investment_amount': 1,
-                            'residence_investment_amount': 1,
-                            'total_invested_amount': 1
-                        });
-    let food,health,education,
-        vehicle,garments,residence,total;
-    (!investmentList.food_investment_amount)?food = 0 : food = investmentList.food_investment_amount;
-    (!investmentList.health_investment_amount)?health = 0 : health = investmentList.health_investment_amount;
-    (!investmentList.education_investment_amount)?education = 0 : education = investmentList.education_investment_amount;
-    (!investmentList.vehicle_investment_amount)?vehicle = 0 : vehicle = investmentList.vehicle_investment_amount;
-    (!investmentList.garments_investment_amount)?garments = 0 : garments = investmentList.garments_investment_amount;
-    (!investmentList.residence_investment_amount)?residence = 0 : residence = investmentList.residence_investment_amount;
-    (!investmentList.total_invested_amount)?total = 0 : total = investmentList.total_invested_amount;
-    
+module.exports.getInvestmentRecord = async (req, res) => {
+    const {
+        _id
+    } = req.user;
+    const investmentList = await User.findById({
+            _id
+        })
+        .select({
+            'food_investment_amount': 1,
+            'health_investment_amount': 1,
+            'education_investment_amount': 1,
+            'vehicle_investment_amount': 1,
+            'garments_investment_amount': 1,
+            'residence_investment_amount': 1,
+            'total_invested_amount': 1
+        });
+    let food, health, education,
+        vehicle, garments, residence, total;
+    (!investmentList.food_investment_amount) ? food = 0: food = investmentList.food_investment_amount;
+    (!investmentList.health_investment_amount) ? health = 0: health = investmentList.health_investment_amount;
+    (!investmentList.education_investment_amount) ? education = 0: education = investmentList.education_investment_amount;
+    (!investmentList.vehicle_investment_amount) ? vehicle = 0: vehicle = investmentList.vehicle_investment_amount;
+    (!investmentList.garments_investment_amount) ? garments = 0: garments = investmentList.garments_investment_amount;
+    (!investmentList.residence_investment_amount) ? residence = 0: residence = investmentList.residence_investment_amount;
+    (!investmentList.total_invested_amount) ? total = 0: total = investmentList.total_invested_amount;
+
     const result = {
         food,
         health,
@@ -575,53 +765,93 @@ module.exports.getInvestmentRecord = async(req,res)=>{
         residence,
         total
     }
-    
+
     res.status(200).send(result);
 }
 
+//method to get list of all membership upgradge request list
+module.exports.membershipUpgradgeRequestList = async(req,res)=>{
+    const membershipUpgradgeRequestObject = await MembershipRequest.find({is_approved: false}).sort({_id: -1});
+
+    res.status(200).send(membershipUpgradgeRequestObject);
+}
+//method to get list of all membership upgrade request count
+module.exports.membershipUpgradgeRequestCount = async(req,res)=>{
+    const totalRequest = await MembershipRequest.find({is_approved: false}).count();
+    // console.log(totalRequest);
+    res.status(200).send({total: totalRequest});
+}
+
 //method to send membership upgrade request
-module.exports.membershipUpgradeRequest = async(req,res)=>{
-    const {_id} = req.user;
-    const {requestedMembership} = req.body;
+module.exports.membershipUpgradeRequest = async (req, res) => {
+    const {
+        _id
+    } = req.user;
+    const user = await User.findOne({_id}).select({name: 1,fortunes_business_id: 1});
+    const {
+        requestedMembership
+    } = req.body;
     const membershipRequest = new MembershipRequest();
     membershipRequest.user_id = _id;
     membershipRequest.requestedMembership = requestedMembership;
     membershipRequest.is_approved = false;
+    membershipRequest.name = user.name;
+    membershipRequest.fortunes_business_id = user.fortunes_business_id;
 
 
-    try{
+    try {
         await membershipRequest.save();
-        res.status(200).send({message: 'Membership Upgrade Request Sent! Please wait for approval!'});
-    }
-    catch(error){
-        res.status(400).send({message: 'Sorry! There was some problem, Please try again!'});
+        res.status(200).send({
+            message: 'Membership Upgrade Request Sent! Please wait for approval!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Sorry! There was some problem, Please try again!'
+        });
     }
 }
 
 //method to accept membership upgradge request
-module.exports.acceptMembershipUpgradgeRequest = async(req,res)=>{
-    const {user_id,newMembershipType} = req.body;
-    const user = await User.findOne({_id: user_id});
+module.exports.acceptMembershipUpgradgeRequest = async (req, res) => {
+    const {
+        user_id,
+        newMembershipType,
+        _id
+    } = req.body;
+    const membershipUpgrade =  await MembershipRequest.findOne({_id});
+    const user = await User.findOne({
+        _id: user_id
+    });
+    membershipUpgrade.is_approved = true;
     user.member_type = newMembershipType;
 
-    try{
+    try {
         await user.save();
-        res.status(200).send({message: 'Member Type Upgraded'});
-    }
-    catch(error){
-        res.status(400).send({message: 'Something went wrong! Please Try Again!'});
+        await membershipUpgrade.save();
+        res.status(200).send({
+            message: 'Member Type Upgraded'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
     }
 }
 //method to delete membership upgradge request
-module.exports.deleteMembershipUpgradgeRequest = async(req,res)=>{
-    const {user_id} = req.body;
-    
-    try{
-        await MembershipRequest.findOneAndRemove({user_id: user_id});
-        res.status(200).send({message: 'Membership deleted succesfully!'});
+module.exports.deleteMembershipUpgradgeRequest = async (req, res) => {
+    const {
+        _id
+    } = req.body;
+
+    try {
+        await MembershipRequest.findOneAndRemove({_id});
+        res.status(200).send({
+            message: 'Membership deleted succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong!'
+        });
     }
-    catch(error){
-        res.status(400).send({message: 'Something went wrong!'});
-    }
-    
+
 }

@@ -147,7 +147,7 @@ module.exports.userPaymentToBeApprovedList = async (req, res) => {
         res.status(400).send({
             message: 'Something went wrong! Please contact the developer'
         });
-        console.log(error);
+        // console.log(error);
     }
 }
 
@@ -156,7 +156,15 @@ module.exports.specificUserPaymentStatus = async(req,res)=>{
     const {_id} = req.user;
     // const id = "5fff4cf8c2978f4470554f39";
     const user = await User.findOne({_id}).select({'payment_status': 1});
-    // console.log(user.payment_status);
-    res.status(200).send(user.payment_status);
+    const sortedData = user.payment_status.sort((a,b)=> (b.total_deposit_amount) - (a.total_deposit_amount));
+    // console.log(sortedData);
+    res.status(200).send(sortedData);
 
+}
+
+//method to count total payment to be approved list
+module.exports.totalPaymentToBeApprovedCount = async(req,res)=>{
+    const total = await Payment.find({is_approved: false}).count();
+
+    res.status(200).send({total});
 }

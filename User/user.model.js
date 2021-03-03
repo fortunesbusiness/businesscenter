@@ -96,11 +96,14 @@ const UserSchema = mongoose.Schema({
             percentage:{
                 type: Number
             },
-            total_deposit_amount:{
+            total_profit_amount:{
                 type: Number
             }
         }
     ],
+    total_profit:{
+        type: Number
+    },
     is_approved:{
         type: Boolean
     },

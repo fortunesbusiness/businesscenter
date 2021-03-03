@@ -9,6 +9,12 @@ const MembershipUpgradeSchema = mongoose.Schema({
     },
     is_approved:{
         type: Boolean
+    },
+    fortunes_business_id:{
+        type: String
+    },
+    name: {
+        type: String
     }
     
 });

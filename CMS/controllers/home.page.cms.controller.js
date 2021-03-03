@@ -41,6 +41,7 @@ module.exports.postFortunesBusinessTitleImage = async(req,res)=>{
             message: "Something went wrong"
         });
 
+        // console.log(req.body);
         // console.log(req.file);
         cloudinary.uploader.upload(req.file.path, {
             public_id: `fortunes-somiti/home/title/${req.file.filename}`

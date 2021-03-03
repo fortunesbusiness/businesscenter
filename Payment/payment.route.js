@@ -9,5 +9,5 @@ router.post('/send',paymentController.makePaymentUpdateRequest);
 router.post('/approve',verifyAdmin,paymentController.approveUserPayment);
 router.get('/request/list',paymentController.userPaymentToBeApprovedList);
 router.get('/specificUser',verifyUser,paymentController.specificUserPaymentStatus);
-
+router.get('/unapproved/count',verifyAdmin,paymentController.totalPaymentToBeApprovedCount);
 module.exports = router;

@@ -21,15 +21,17 @@ const adviceRouter = require('./Advice/advice.route');
 
 //connect database
 const DB_URI = process.env.DB_URI;
+// console.log(DB_URI);
 mongoose.connect(DB_URI,()=>{
     console.log(`Connected to database`);
 });
 
 //cloudinary configuration
+//cloudinary configuration
 cloudinary.config({ 
-  cloud_name: 'dbefofzqn', 
-  api_key: '685581139743957', 
-  api_secret: 'KZMOdAMwbuNw6pOJHrDq_nsig4Y' 
+    cloud_name: 'dzywuv120', 
+    api_key: '383977439748697', 
+    api_secret: 'N_66lZPmjQqdEkx0Rcs5iKHnimg' 
 });
 
 //initialize helper libraries

@@ -22,7 +22,7 @@ module.exports.createAdmin = async(req,res)=>{
         res.status(200).send({message: 'Admin Created'});
     }
     catch(error){
-        // console.log(error);
+        console.log(error);
         res.status(400).send({message: 'Some Error occured'});
     }
 }
