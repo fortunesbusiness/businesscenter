@@ -59,10 +59,10 @@ module.exports.register = async (req, res) => {
         });
         //cloudinary configuration
         cloudinary.config({ 
-            cloud_name: 'dzywuv120', 
-            api_key: '383977439748697', 
-            api_secret: 'N_66lZPmjQqdEkx0Rcs5iKHnimg' 
-        });
+    cloud_name: 'dbefofzqn', 
+    api_key: '685581139743957', 
+    api_secret: 'KZMOdAMwbuNw6pOJHrDq_nsig4Y' 
+});
 
         //destruct body objects
         const {
