@@ -18,6 +18,7 @@ const paymentRouter = require('./Payment/payment.route');
 const cmsRouter = require('./CMS/cms.route');
 const investmentRouter = require('./Investment/investment.route');
 const adviceRouter = require('./Advice/advice.route');
+const businessCenterRouter = require('./BusinessCenter/business.center.route');
 
 //connect database
 const DB_URI = process.env.DB_URI;
@@ -29,9 +30,9 @@ mongoose.connect(DB_URI,()=>{
 //cloudinary configuration
 //cloudinary configuration
 cloudinary.config({ 
-    cloud_name: 'dbefofzqn', 
-    api_key: '685581139743957', 
-    api_secret: 'KZMOdAMwbuNw6pOJHrDq_nsig4Y' 
+    cloud_name: 'dzywuv120', 
+    api_key: '383977439748697', 
+    api_secret: 'N_66lZPmjQqdEkx0Rcs5iKHnimg' 
 });
 
 //initialize helper libraries
@@ -46,6 +47,7 @@ app.use('/api/payment',paymentRouter);
 app.use('/api/cms',cmsRouter);
 app.use('/api/investment',investmentRouter);
 app.use('/api/advice',adviceRouter);
+app.use('/api/businesscenter',businessCenterRouter);
 
 //starting the application
 app.listen(PORT,()=>{

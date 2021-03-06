@@ -2,7 +2,7 @@ const Payment = require('./payment.model');
 const User = require('../User/user.model');
 const multer = require('multer');
 const storage = multer.memoryStorage();
-
+const BusinessCenter = require('../BusinessCenter/business.center.model');
 
 const {deleteUploadDirectory} = require('../Utility/delete.directory');
 //cloudinary integration
@@ -24,7 +24,8 @@ module.exports.makePaymentUpdateRequest = async (req, res) => {
             fortunesBusinessId,
             amount,
             recipt_number_or_txrd_id,
-            payment_method
+            payment_method,
+            bankName
         } = req.body;
         // // console.log(req.file.path);
         // // console.log(req.file.path);
@@ -46,7 +47,7 @@ module.exports.makePaymentUpdateRequest = async (req, res) => {
                 payment.payment_type = payment_method;
                 payment.is_approved = false;
                 payment.bank_recipt_number_bkash_or_rocket_transaction_id = recipt_number_or_txrd_id;
-    
+                payment.bank_name = bankName;
                 try {
                     await payment.save();
                     await deleteUploadDirectory();
@@ -73,13 +74,18 @@ module.exports.approveUserPayment = async (req, res) => {
         fortunesBusinessId,
         month_name,
         amount,
-        year
+        year,
+        bankName
     } = req.body;
-    const user_deposit_amount = await updateDepositAmount(amount,fortunesBusinessId);
-    if(!user_deposit_amount) return res.status(400).send({message: 'Some issue occured! Please contact the developer'});
+    const updatedAmount = await updateDepositAndAmount(amount,fortunesBusinessId);
+    // console.log(updatedAmount);
+    if(!updatedAmount.total) return res.status(400).send({message: 'Some issue occured! Please contact the developer'});
+    const businessCenter = await BusinessCenter.findOne({_id: '6042f1e6b5e92405ccb4b95c'});
+    businessCenter.total_deposit = Number(businessCenter.total_deposit) + Number(amount);
     // console.log(req.body);
     // console.log(total_deposited_amount);
     try {
+        await businessCenter.save();
         await updatePaymentStatus(id);
         await User.findOneAndUpdate({
             fortunes_business_id: fortunesBusinessId
@@ -89,7 +95,9 @@ module.exports.approveUserPayment = async (req, res) => {
                     month_name: month_name,
                     amount: amount,
                     year: year,
-                    total_deposit_amount: user_deposit_amount
+                    bank_name: bankName,
+                    total_deposit_amount: updatedAmount.total,
+                    due_amount: updatedAmount.due
                 }
             }
         });
@@ -104,16 +112,23 @@ module.exports.approveUserPayment = async (req, res) => {
 
 }
 //method to update user total deposit amount
-const updateDepositAmount = async(amount,fortunesBusinessId)=>{
-    const user = await User.findOne({fortunes_business_id: fortunesBusinessId}).select({'total_deposited_amount': 1});
+const updateDepositAndAmount = async(amount,fortunesBusinessId)=>{
+    const user = await User.findOne({fortunes_business_id: fortunesBusinessId}).select({'total_deposited_amount': 1,'due_amount': 1});
     const paid_amount = Number(amount);
+    
+
     let total_amount;
     if(!user.total_deposited_amount) total_amount = paid_amount;
     else total_amount = Number(user.total_deposited_amount)+ Number(paid_amount);
     user.total_deposited_amount = total_amount;
+    user.due_amount = Number(user.due_amount) - Number(paid_amount);
+    const updatedAmount = {
+        due: user.due_amount,
+        total: total_amount
+    }
     try{
         await user.save();
-        return total_amount;
+        return updatedAmount;
     }   
     catch(error){
         return 0;

@@ -79,6 +79,12 @@ const UserSchema = mongoose.Schema({
             },
             total_deposit_amount:{
                 type: Number
+            },
+            bank_name:{
+                type: String
+            },
+            due_amount:{
+                type: Number
             }
         }
     ],
@@ -167,6 +173,12 @@ const UserSchema = mongoose.Schema({
         type: Number
     },
     residence_investment_amount :{
+        type: Number
+    },
+    total_share:{
+        type: Number
+    },
+    due_amount: {
         type: Number
     }
     

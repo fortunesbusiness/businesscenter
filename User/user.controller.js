@@ -1,6 +1,7 @@
 const User = require('./user.model');
 const Investment = require('../Investment/investment.model');
 const MembershipRequest = require('../MembershipUpgrage/membership.upgradge.model');
+const BusinessCenter = require('../BusinessCenter/business.center.model');
 
 const {
     hashPassword,
@@ -59,10 +60,10 @@ module.exports.register = async (req, res) => {
         });
         //cloudinary configuration
         cloudinary.config({ 
-    cloud_name: 'dbefofzqn', 
-    api_key: '685581139743957', 
-    api_secret: 'KZMOdAMwbuNw6pOJHrDq_nsig4Y' 
-});
+            cloud_name: 'dzywuv120', 
+            api_key: '383977439748697', 
+            api_secret: 'N_66lZPmjQqdEkx0Rcs5iKHnimg' 
+        });
 
         //destruct body objects
         const {
@@ -134,6 +135,12 @@ module.exports.register = async (req, res) => {
             }, async (error, result) => {
                 const saveInformationToDatabase = async () => {
                     //if not exits create new account
+                    let dueAmount;
+                    if(memberType.toUpperCase() == 'PREMIUM'){
+                        dueAmount = 1000000;
+                    }else if(memberType.toUpperCase() == 'GENERAL'){
+                        dueAmount = 50000;
+                    }
                     const hashedPassword = await hashPassword(password);
                     const user = new User({
                         name: name,
@@ -153,6 +160,7 @@ module.exports.register = async (req, res) => {
                         password: hashedPassword,
                         reference: referenceNumber,
                         is_approved: false,
+                        due_amount: dueAmount,
                         nominee: {
                             name: nomineeName,
                             relationship: nomineeRelationship,
@@ -338,10 +346,20 @@ module.exports.approveUser = async (req, res) => {
     const user = await User.findOne({
         _id
     });
+    let businessCenter;
     user.is_approved = true;
+    user.total_share = 1;
+    if(user.member_type == 'PREMIUM'){
+        businessCenter = await BusinessCenter.findOne({_id: '6042f1e6b5e92405ccb4b95c'});
+        businessCenter.total_premium_share_sold = Number(businessCenter.total_premium_share_sold) + Number(1);
+    }else if(user.member_type == 'GENERAL'){
+        businessCenter = await BusinessCenter.findOne({_id: '6042f1e6b5e92405ccb4b95c'});
+        businessCenter.total_general_share_sold = Number(businessCenter.total_general_share_sold) + Number(1);
+    }
 
     try {
         await user.save();
+        await businessCenter.save();
         res.status(200).send({
             message: `User Approved!`
         });
@@ -482,7 +500,7 @@ const updateSpecificUserTotalDepositAmount = async (_id, amount) => {
     }
 
 }
-//method to get profit for a specific user
+//method to get profit of a specific user
 module.exports.getProfit = async (req, res) => {
     const {
         _id
@@ -490,6 +508,23 @@ module.exports.getProfit = async (req, res) => {
     // const _id = "5fff4cf8c2978f4470554f39";
     const user = await User.findOne({
         _id
+    }).select({
+        'profit': 1
+    });
+    const sortedData = user.profit.sort((a,b)=> (b.total_profit_amount) - (a.total_profit_amount))
+    // console.log(sortedData);
+    res.status(200).send(sortedData);
+    // res.send(user);
+}
+
+//method to get specific user profit 
+module.exports.getUserProfitList  = async (req, res) => {
+    const {
+        fortunes_business_id
+    } = req.body;
+    // const _id = "5fff4cf8c2978f4470554f39";
+    const user = await User.findOne({
+        fortunes_business_id: fortunes_business_id
     }).select({
         'profit': 1
     });
@@ -864,4 +899,18 @@ module.exports.deleteMembershipUpgradgeRequest = async (req, res) => {
         });
     }
 
+}
+//method to get specific user total share number
+module.exports.getTotalShareNumber = async(req,res)=>{
+    const {_id} = req.user;
+    const user = await User.findOne({_id}).select({'total_share': 1});
+
+    res.status(200).send({totalShare: user.total_share});
+}
+//method to get specific user total due amount
+module.exports.getTotalDueAmount = async(req,res)=>{
+    const {_id} = req.user;
+    const user = await User.findOne({_id}).select({'due_amount': 1});
+
+    res.status(200).send({totalDueAmount: user.due_amount});
 }

@@ -20,6 +20,9 @@ const PaymentSchema = new mongoose.Schema({
     },
     payment_type:{
         type: String
+    },
+    bank_name:{
+        type: String
     }
 });
 
