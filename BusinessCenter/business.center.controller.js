@@ -4,7 +4,7 @@ const BusinessCenter = require('../BusinessCenter/business.center.model');
 
 //method to get all share information 
 module.exports.businessCenterShareAndDepositInformation = async(req,res)=>{
-    const businessCenter = await BusinessCenter.findOne({_id: "6042f1e6b5e92405ccb4b95c"});
+    const businessCenter = await BusinessCenter.findOne({_id: "60436f82b650c1d538a63db0"});
     // console.log(businessCenter);
     const result = {
         totalPremiumShare: businessCenter.total_premium_share,
