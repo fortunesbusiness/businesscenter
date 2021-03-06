@@ -80,7 +80,7 @@ module.exports.approveUserPayment = async (req, res) => {
     const updatedAmount = await updateDepositAndAmount(amount,fortunesBusinessId);
     // console.log(updatedAmount);
     if(!updatedAmount.total) return res.status(400).send({message: 'Some issue occured! Please contact the developer'});
-    const businessCenter = await BusinessCenter.findOne({_id: '6042f1e6b5e92405ccb4b95c'});
+    const businessCenter = await BusinessCenter.findOne({_id: '60436f82b650c1d538a63db0'});
     businessCenter.total_deposit = Number(businessCenter.total_deposit) + Number(amount);
     // console.log(req.body);
     // console.log(total_deposited_amount);
