@@ -60,10 +60,10 @@ module.exports.register = async (req, res) => {
         });
         //cloudinary configuration
         cloudinary.config({ 
-    cloud_name: 'dbefofzqn', 
-    api_key: '685581139743957', 
-    api_secret: 'KZMOdAMwbuNw6pOJHrDq_nsig4Y' 
-});
+            cloud_name: 'dzywuv120', 
+            api_key: '383977439748697', 
+            api_secret: 'N_66lZPmjQqdEkx0Rcs5iKHnimg' 
+        });
 
         //destruct body objects
         const {
@@ -350,10 +350,10 @@ module.exports.approveUser = async (req, res) => {
     user.is_approved = true;
     user.total_share = 1;
     if(user.member_type == 'PREMIUM'){
-        businessCenter = await BusinessCenter.findOne({_id: '60436f82b650c1d538a63db0'});
+        businessCenter = await BusinessCenter.findOne({_id: '6042f1e6b5e92405ccb4b95c'});
         businessCenter.total_premium_share_sold = Number(businessCenter.total_premium_share_sold) + Number(1);
     }else if(user.member_type == 'GENERAL'){
-        businessCenter = await BusinessCenter.findOne({_id: '60436f82b650c1d538a63db0'});
+        businessCenter = await BusinessCenter.findOne({_id: '6042f1e6b5e92405ccb4b95c'});
         businessCenter.total_general_share_sold = Number(businessCenter.total_general_share_sold) + Number(1);
     }
 

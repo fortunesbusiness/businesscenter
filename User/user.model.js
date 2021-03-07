@@ -85,6 +85,9 @@ const UserSchema = mongoose.Schema({
             },
             due_amount:{
                 type: Number
+            },
+            payment_date:{
+                type: String
             }
         }
     ],

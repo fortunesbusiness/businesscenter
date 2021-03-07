@@ -25,7 +25,8 @@ module.exports.makePaymentUpdateRequest = async (req, res) => {
             amount,
             recipt_number_or_txrd_id,
             payment_method,
-            bankName
+            bankName,
+            date
         } = req.body;
         // // console.log(req.file.path);
         // // console.log(req.file.path);
@@ -48,6 +49,7 @@ module.exports.makePaymentUpdateRequest = async (req, res) => {
                 payment.is_approved = false;
                 payment.bank_recipt_number_bkash_or_rocket_transaction_id = recipt_number_or_txrd_id;
                 payment.bank_name = bankName;
+                payment.date = date;
                 try {
                     await payment.save();
                     await deleteUploadDirectory();
@@ -75,12 +77,13 @@ module.exports.approveUserPayment = async (req, res) => {
         month_name,
         amount,
         year,
-        bankName
+        bankName,
+        payment_date
     } = req.body;
     const updatedAmount = await updateDepositAndAmount(amount,fortunesBusinessId);
     // console.log(updatedAmount);
     if(!updatedAmount.total) return res.status(400).send({message: 'Some issue occured! Please contact the developer'});
-    const businessCenter = await BusinessCenter.findOne({_id: '60436f82b650c1d538a63db0'});
+    const businessCenter = await BusinessCenter.findOne({_id: '6042f1e6b5e92405ccb4b95c'});
     businessCenter.total_deposit = Number(businessCenter.total_deposit) + Number(amount);
     // console.log(req.body);
     // console.log(total_deposited_amount);
@@ -97,7 +100,8 @@ module.exports.approveUserPayment = async (req, res) => {
                     year: year,
                     bank_name: bankName,
                     total_deposit_amount: updatedAmount.total,
-                    due_amount: updatedAmount.due
+                    due_amount: updatedAmount.due,
+                    payment_date: payment_date
                 }
             }
         });
