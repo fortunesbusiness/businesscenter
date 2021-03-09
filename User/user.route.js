@@ -31,5 +31,6 @@ router.get('/membershipupgradge/request/count',verifyAdmin,userController.member
 router.get('/membership/request',verifyAdmin,userController.membershipUpgradgeRequestList);
 router.get('/sharenumber',verifyUser,userController.getTotalShareNumber);
 router.get('/dueamount',verifyUser,userController.getTotalDueAmount);
+router.post('/remove',verifyAdmin,userController.removeUser);
 
 module.exports = router;
