@@ -15,6 +15,9 @@ const BusinessCenterSchema = mongoose.Schema({
     },
     total_deposit:{
         type: Number
+    },
+    expense:{
+        type: Number
     }
     
 });
