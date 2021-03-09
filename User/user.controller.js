@@ -914,3 +914,16 @@ module.exports.getTotalDueAmount = async(req,res)=>{
 
     res.status(200).send({totalDueAmount: user.due_amount});
 }
+
+//method to remove a specific user
+module.exports.removeUser = async(req,res)=>{
+    const {_id} = req.body;
+
+    try{
+        await User.findOneAndRemove({_id});
+        res.status(200).send({message: 'User Succesfully removed!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
