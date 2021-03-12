@@ -139,7 +139,7 @@ module.exports.register = async (req, res) => {
                     if(memberType.toUpperCase() == 'PREMIUM'){
                         dueAmount = 1000000;
                     }else if(memberType.toUpperCase() == 'GENERAL'){
-                        dueAmount = 50000;
+                        dueAmount = 500000;
                     }
                     const hashedPassword = await hashPassword(password);
                     const user = new User({
