@@ -32,5 +32,31 @@ router.get('/membership/request',verifyAdmin,userController.membershipUpgradgeRe
 router.get('/sharenumber',verifyUser,userController.getTotalShareNumber);
 router.get('/dueamount',verifyUser,userController.getTotalDueAmount);
 router.post('/remove',verifyAdmin,userController.removeUser);
+router.post('/update/username',verifyAdmin,userController.updateUserName);
+router.post('/update/userfathername',verifyAdmin,userController.updateUserFatherName);
+router.post('/update/usermothername',verifyAdmin,userController.updateUserMotherName);
+router.post('/update/userspousename',verifyAdmin,userController.updateUserSpouseName);
+router.post('/update/userphonenumber',verifyAdmin,userController.updateUserPhone);
+router.post('/update/useremail',verifyAdmin,userController.updateUserEmail);
+router.post('/update/usernidnumber',verifyAdmin,userController.updateUserNid);
+router.post('/update/businessid',verifyAdmin,userController.updateUserBusinessId);
+router.post('/update/dob',verifyAdmin,userController.updateUserDateOfBirth);
+router.post('/update/password',verifyAdmin,userController.updateUserPassword);
+router.post('/update/userpresentaddress',verifyAdmin,userController.updateUserPresentAddress);
+router.post('/update/permanentaddress',verifyAdmin,userController.updateUserPermanentAddress);
+router.post('/update/referencenumber',verifyAdmin,userController.updateUserReferenceNumber);
+router.post('/update/dueamount',verifyAdmin,userController.updateUserDueAmount);
+router.post('/update/totaldeposit',verifyAdmin,userController.updateUserTotalDepositAmount);
+router.post('/update/totalshare',verifyAdmin,userController.updateUserTotalShare);
+router.post('/update/totalprofit',verifyAdmin,userController.updateUserTotalProfit);
+router.post('/update/nominee/name',verifyAdmin,userController.updateUserNomineeName);
+router.post('/update/nominee/relation',verifyAdmin,userController.updateUserNomineeRelationship);
+router.post('/update/nominee/nid',verifyAdmin,userController.updateUserNomineeNidNumber);
+router.post('/update/nominee/mobile',verifyAdmin,userController.updateUserNomineeMobileNumber);
+router.post('/update/nominee/image',verifyAdmin,userController.updateUserNomineeImage);
+router.post('/update/nominee/nidimage',verifyAdmin,userController.updateUserNomineeAttachment);
+router.post('/update/image',verifyAdmin,userController.updateUserImage);
+router.post('/update/nidimage',verifyAdmin,userController.updateUserNidImage);
+
 
 module.exports = router;
