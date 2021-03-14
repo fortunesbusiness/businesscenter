@@ -927,3 +927,514 @@ module.exports.removeUser = async(req,res)=>{
         res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
     }
 }
+
+//method to update specific user name
+module.exports.updateUserName = async(req,res)=>{
+    const {name,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.name = name;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Username changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user father name
+module.exports.updateUserFatherName = async(req,res)=>{
+    const {fathername,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.father_name = fathername;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Father Name changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user mother name
+module.exports.updateUserMotherName = async(req,res)=>{
+    const {mothername,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.mother_name = mothername;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Mother Name changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user spouse name
+module.exports.updateUserSpouseName = async(req,res)=>{
+    const {spousename,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.spouse_name = spousename;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Spouse Name changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user  phone
+module.exports.updateUserPhone = async(req,res)=>{
+    const {phone,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.phone_number = phone;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Phone Number changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user email address
+module.exports.updateUserEmail = async(req,res)=>{
+    const {email,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.email_address = email;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Email Address changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user nid number
+module.exports.updateUserNid = async(req,res)=>{
+    const {nid,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.nid_number = nid;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Nid Number changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+
+//method to update specific user date of birth
+module.exports.updateUserDateOfBirth = async(req,res)=>{
+    const {birthdate,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.date_of_birth = birthdate;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Date Of Birth changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user passsword
+module.exports.updateUserPassword = async(req,res)=>{
+    const {password,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+    const hashedPassword = await hashPassword(password);
+    console.log(hashPassword);
+    user.password = hashedPassword;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Date Of Birth changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user Business Id
+module.exports.updateUserBusinessId = async(req,res)=>{
+    const {business_id,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+
+    user.fortunes_business_id = business_id;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Date Of Birth changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user present address 
+module.exports.updateUserPresentAddress = async(req,res)=>{
+    const {presentaddress,user_id} = req.body;
+    console.log(presentaddress);
+    const user = await User.findOne({_id: user_id});
+ 
+    user.present_address = presentaddress;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Present Address changed succesfully!'});
+    }
+    catch(error){
+        console.log(error);
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user permanent address 
+module.exports.updateUserPermanentAddress = async(req,res)=>{
+    const {permanentaddress,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+ 
+    user.permanent_address = permanentaddress;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Permanent Address changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user reference number 
+module.exports.updateUserReferenceNumber = async(req,res)=>{
+    const {reference,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+ 
+    user.reference = reference;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Reference Number changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user due ammount
+module.exports.updateUserDueAmount = async(req,res)=>{
+    const {dueamount,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+ 
+    user.due_amount = dueamount;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Due Amount changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user total deposit ammount
+module.exports.updateUserTotalDepositAmount = async(req,res)=>{
+    const {totaldeposit,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+ 
+    user.total_deposited_amount = totaldeposit;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Total Deposited Amount changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user total share
+module.exports.updateUserTotalShare = async(req,res)=>{
+    const {totalShare,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+ 
+    user.total_share = totalShare;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Total Share changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+
+
+//method to update specific user total Profit
+module.exports.updateUserTotalProfit = async(req,res)=>{
+    const {totalProfit,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id});
+ 
+    user.total_profit = totalProfit;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'Total Profit Amount changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user nominee name
+module.exports.updateUserNomineeName = async(req,res)=>{
+    const {nomineeName,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'nominee': 1});
+ 
+    user.nominee[0].name = nomineeName;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'User Nominee Name changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update user image
+module.exports.updateUserImage = async (req, res) => {
+    const upload = multer({
+        dest: 'uploads'
+    }).single("userImage");
+    upload(req, res, (error) => {
+        if (error) return res.status(400).send({
+            message: "Something went wrong"
+        });
+        const {user_id,businessId} = req.body;
+        // console.log(req.body);
+        // console.log(req.file);
+        cloudinary.uploader.upload(req.file.path, {
+            public_id: `fortunes-somiti/user/${businessId}/profile/${req.file.filename}`
+        })
+        .then(async (response)=>{
+                const user = await User.findOne({_id: user_id});
+                const {url} = response;
+                user.image = url;
+                // console.log(user.nominee[0].image);
+                try {
+                    await user.save();
+                    await deleteUploadDirectory();
+                    res.status(200).send({
+                        message: `User Nominee Image Updated Succesfully!`
+                    });
+                } catch (error) {
+                    res.status(400).send({
+                        message: `Something went wrong`
+                    });
+                    // console.log(error);
+                }
+            // }
+        })
+    })
+
+}
+module.exports.updateUserNidImage = async (req, res) => {
+    const upload = multer({
+        dest: 'uploads'
+    }).single("userNidImage");
+    upload(req, res, (error) => {
+        if (error) return res.status(400).send({
+            message: "Something went wrong"
+        });
+        const {user_id,businessId} = req.body;
+        // console.log(req.body);
+        // console.log(req.file);
+        cloudinary.uploader.upload(req.file.path, {
+            public_id: `fortunes-somiti/user/${businessId}/nid/${req.file.filename}`
+        })
+        .then(async (response)=>{
+                const user = await User.findOne({_id: user_id});
+                const {url} = response;
+                user.nid_image = url;
+                // console.log(user.nominee[0].image);
+                try {
+                    await user.save();
+                    await deleteUploadDirectory();
+                    res.status(200).send({
+                        message: `User Nominee Image Updated Succesfully!`
+                    });
+                } catch (error) {
+                    res.status(400).send({
+                        message: `Something went wrong`
+                    });
+                    // console.log(error);
+                }
+            // }
+        })
+    })
+
+}
+//method to update specific user nominee relationship
+module.exports.updateUserNomineeRelationship = async(req,res)=>{
+    const {relationship,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'nominee': 1});
+ 
+    user.nominee[0].relationship = relationship;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'User Nominee Relationship changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user nominee nid number
+module.exports.updateUserNomineeNidNumber = async(req,res)=>{
+    const {nidNumber,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'nominee': 1});
+ 
+    user.nominee[0].nid = nidNumber;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'User Nominee Relationship changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to update specific user nominee nid number
+module.exports.updateUserNomineeMobileNumber = async(req,res)=>{
+    const {mobile,user_id} = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'nominee': 1});
+ 
+    user.nominee[0].mobile_number = mobile;
+
+    try{
+        await user.save();
+        res.status(200).send({message: 'User Nominee Mobile Number changed succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Sorry! Something went wrong! Please ty again!'});
+    }
+}
+
+//method to register normal users
+module.exports.updateUserNomineeImage = async (req, res) => {
+    const upload = multer({
+        dest: 'uploads'
+    }).single("nomineeImage");
+    upload(req, res, (error) => {
+        if (error) return res.status(400).send({
+            message: "Something went wrong"
+        });
+        const {user_id,businessId} = req.body;
+        // console.log(req.body);
+        // console.log(req.file);
+        cloudinary.uploader.upload(req.file.path, {
+            public_id: `fortunes-somiti/user/${businessId}/nominee/${req.file.filename}`
+        })
+        .then(async (response)=>{
+                const user = await User.findOne({_id: user_id}).select({'nominee': 1});
+                const {url} = response;
+                user.nominee[0].image = url;
+                // console.log(user.nominee[0].image);
+                try {
+                    await user.save();
+                    await deleteUploadDirectory();
+                    res.status(200).send({
+                        message: `User Nominee Image Updated Succesfully!`
+                    });
+                } catch (error) {
+                    res.status(400).send({
+                        message: `Something went wrong`
+                    });
+                    // console.log(error);
+                }
+            // }
+        })
+    })
+
+}
+
+//method to update user nominee nid attachment 
+module.exports.updateUserNomineeAttachment = async (req, res) => {
+    const upload = multer({
+        dest: 'uploads'
+    }).single("nomineeNidImage");
+    upload(req, res, (error) => {
+        if (error) return res.status(400).send({
+            message: "Something went wrong"
+        });
+        const {user_id,businessId} = req.body;
+        // console.log(req.body);
+        // console.log(req.file);
+        cloudinary.uploader.upload(req.file.path, {
+            public_id: `fortunes-somiti/user/${businessId}/nominee/nid/${req.file.filename}`
+        })
+        .then(async (response)=>{
+                const user = await User.findOne({_id: user_id}).select({'nominee': 1});
+                const {url} = response;
+                user.nominee[0].nid_image = url;
+                // console.log(user.nominee[0].image);
+                try {
+                    await user.save();
+                    await deleteUploadDirectory();
+                    res.status(200).send({
+                        message: `User Nominee Image Updated Succesfully!`
+                    });
+                } catch (error) {
+                    res.status(400).send({
+                        message: `Something went wrong`
+                    });
+                    // console.log(error);
+                }
+            // }
+        })
+    })
+
+}
