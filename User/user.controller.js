@@ -84,13 +84,15 @@ module.exports.register = async (req, res) => {
             nomineeRelationship,
             nomineeMobile,
             nomineeNid,
-            referenceNumber
+            referenceNumber,
+            totalShare
         } = req.body;
         // check if business id used previously or not
         const businessIdExists = await checkIfUserAlreadyExists(fortunesBusinessId);
         if (businessIdExists) return res.status(400).send({
             message: `Business id is already in use`
         });
+
         // console.log(req.body);
         // console.log(req.files);
         // let filePaths = req.files.nidImage[0].path;
@@ -126,7 +128,7 @@ module.exports.register = async (req, res) => {
                 },
                 nomineeNidImage: (callback) => {
                     cloudinary.uploader.upload(req.files.nomineeNidPhoto[0].path, {
-                            public_id: `fortunes-somiti/user/${fortunesBusinessId}/nominee/nid${req.files.nomineeNidPhoto[0].filename}`
+                            public_id: `fortunes-somiti/user/${fortunesBusinessId}/nominee/nid/${req.files.nomineeNidPhoto[0].filename}`
                         })
                         .then((response) => {
                             callback(null, response.url);
@@ -135,11 +137,12 @@ module.exports.register = async (req, res) => {
             }, async (error, result) => {
                 const saveInformationToDatabase = async () => {
                     //if not exits create new account
-                    let dueAmount;
+                    let dueAmount = 0;
+                    
                     if(memberType.toUpperCase() == 'PREMIUM'){
-                        dueAmount = 1000000;
+                        dueAmount = Number(Number(1000000) * Number(totalShare));
                     }else if(memberType.toUpperCase() == 'GENERAL'){
-                        dueAmount = 500000;
+                        dueAmount = Number(Number(500000)* Number(totalShare));
                     }
                     const hashedPassword = await hashPassword(password);
                     const user = new User({
@@ -161,6 +164,7 @@ module.exports.register = async (req, res) => {
                         reference: referenceNumber,
                         is_approved: false,
                         due_amount: dueAmount,
+                        total_share: totalShare,
                         nominee: {
                             name: nomineeName,
                             relationship: nomineeRelationship,
