@@ -58,3 +58,45 @@ module.exports.getTotalRequestAndRegisteredmember = async(req,res)=>{
     }
     res.status(200).send(result);
 }
+//method to update admin username
+module.exports.updateAdminUsername = async(req,res)=>{
+    //destruct admin objects
+    const {username} = req.body;
+
+    //create admin object
+    const admin = await Admin.findOne({_id: '603b78c5a50f0c00157f9c8d'});
+
+    admin.username = username;
+
+    try{
+        await admin.save();
+        res.status(200).send({message: 'Admin Username Changed!'});
+    }
+    catch(error){
+        console.log(error);
+        res.status(400).send({message: 'Some Error occured'});
+    }
+}
+
+module.exports.updateAdminPassword = async(req,res)=>{
+    //destruct admin objects
+    const {password} = req.body;
+
+    //hash admin password
+    const hashedPassword = await hashPassword(password);
+
+    //create admin object
+    const admin = await Admin.findOne({_id: '603b78c5a50f0c00157f9c8d'});
+
+    
+    admin.password = hashedPassword;
+
+    try{
+        await admin.save();
+        res.status(200).send({message: 'Admin Password Changed'});
+    }
+    catch(error){
+        console.log(error);
+        res.status(400).send({message: 'Some Error occured'});
+    }
+}
