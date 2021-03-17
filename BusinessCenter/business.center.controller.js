@@ -35,3 +35,36 @@ module.exports.addExpense = async(req,res)=>{
         res.status(400).send({message: 'Sorry! Something went wrong please try again!'});
     }
 }
+//method to change business center expenses 
+module.exports.changeExpense = async(req,res)=>{
+    const {expense} = req.body;
+    const businessCenter = await BusinessCenter.findOne({_id: "60436f82b650c1d538a63db0"});
+    // console.log(businessCenter);
+    businessCenter.expense = Number(expense);
+
+    try{
+        await businessCenter.save();
+        res.status(200).send({message: 'Expense Succesfully Added!'});
+    }
+    catch(error){
+        console.log(error);
+        res.status(400).send({message: 'Sorry! Something went wrong please try again!'});
+    }
+}
+
+//method to update business center deposit 
+module.exports.changeDepositAmount = async(req,res)=>{
+    const {deposit} = req.body;
+    const businessCenter = await BusinessCenter.findOne({_id: "60436f82b650c1d538a63db0"});
+    // console.log(businessCenter);
+    businessCenter.total_deposit = Number(deposit);
+
+    try{
+        await businessCenter.save();
+        res.status(200).send({message: 'Deposit Updated Succesfully!'});
+    }
+    catch(error){
+        console.log(error);
+        res.status(400).send({message: 'Sorry! Something went wrong please try again!'});
+    }
+}
