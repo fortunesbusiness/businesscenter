@@ -230,3 +230,46 @@ module.exports.updateUserPaymentRequestData = async(req,res)=>{
         }
         
 }
+
+//method to update payment attachment data
+module.exports.updatePaymentAttachmentData = async(req,res)=>{
+    const upload = multer({
+        dest: 'uploads'
+    }).single("userPaymentAttachment");
+    upload(req, res, (error) => {
+        if(error) console.log(error);
+        if (error) return res.status(400).send({
+            message: "Something went wrong"
+        });
+        const {
+            payment_id,
+            business_id
+        } = req.body;
+        cloudinary.uploader.upload(req.file.path, {
+            public_id: `fortunes-somiti/user/${business_id}/payment/${req.file.filename}`
+        })
+        .then(async (response)=>{
+            // async function (result) {
+                const {url} = response;
+                
+                const payment = await Payment.findOne({_id: payment_id});
+                payment.recipt_or_transaction_id_image = url;
+                try {
+                    await payment.save();
+                    await deleteUploadDirectory();
+                    res.status(200).send({
+                        message: `Payment Attachment has been changed succesfully!`
+                    });
+                } catch (error) {
+                    console.log(error);
+                    res.status(400).send({
+                        message: `Something went wrong`
+                    });
+                    // console.log(error);
+                }
+            // }
+        })
+    })
+    
+
+}
