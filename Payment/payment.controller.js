@@ -187,3 +187,46 @@ module.exports.totalPaymentToBeApprovedCount = async(req,res)=>{
 
     res.status(200).send({total});
 }
+
+//method to remove specific payment
+module.exports.removeSpecificPayment = async(req,res)=>{
+    const {payment_id} = req.body;
+
+    try{
+        await Payment.findOneAndRemove({_id: payment_id});
+        res.status(200).send({message: 'Payment Removed Succesfully!'});
+    }
+    catch(error){
+        res.status(400).send({message: 'Internal Server Error!'});
+    }
+}
+
+//method to update payment request data
+module.exports.updateUserPaymentRequestData = async(req,res)=>{
+    const {payment_id,
+        businessId,
+        paymentAmount,
+        reciptOrTxrd,
+        paymentType,
+        bankName,
+        paymentDate} = req.body;
+
+        const payment = await Payment.findOne({_id: payment_id});
+
+        payment.recipt_or_transaction_id_image = reciptOrTxrd;
+        payment.amount = paymentAmount;
+        payment.fortunes_business_id = businessId;
+        payment.payment_type = paymentType;
+        payment.bank_name = bankName;
+        payment.date = paymentDate;
+
+        try{
+            const result = await payment.save();
+            // console.log(result);\
+            res.status(200).send({message: 'Payment Request Data Updated!'});
+        }
+        catch(error){
+            res.status(400).send({message: 'Something went wrong! Please try again!'});
+        }
+        
+}
