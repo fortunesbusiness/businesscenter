@@ -12,4 +12,5 @@ router.get('/specificUser',verifyUser,paymentController.specificUserPaymentStatu
 router.get('/unapproved/count',verifyAdmin,paymentController.totalPaymentToBeApprovedCount);
 router.post('/remove',verifyAdmin,paymentController.removeSpecificPayment);
 router.post('/update/request/data',verifyAdmin,paymentController.updateUserPaymentRequestData);
+router.post('/update/attachment/data',verifyAdmin,paymentController.updatePaymentAttachmentData);
 module.exports = router;
