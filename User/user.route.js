@@ -57,6 +57,8 @@ router.post('/update/nominee/image',verifyAdmin,userController.updateUserNominee
 router.post('/update/nominee/nidimage',verifyAdmin,userController.updateUserNomineeAttachment);
 router.post('/update/image',verifyAdmin,userController.updateUserImage);
 router.post('/update/nidimage',verifyAdmin,userController.updateUserNidImage);
+router.post('/remove/payment',verifyAdmin,userController.removeSpecificUserPayment);
+router.post('/update/payment',verifyAdmin,userController.updateSpecificUserPayment);
 
 
 module.exports = router;
