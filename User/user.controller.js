@@ -1442,3 +1442,69 @@ module.exports.updateUserNomineeAttachment = async (req, res) => {
     })
 
 }
+
+//method to pull specific payment
+module.exports.removeSpecificUserPayment = async (req, res) => {
+    const {
+        fortunes_business_id,
+        payment_id
+    } = req.body;
+
+    try {
+        await User.findOneAndUpdate({
+            fortunes_business_id: fortunes_business_id
+        }, {
+            $pull: {
+                payment_status: {
+                    _id: payment_id
+                }
+            }
+        });
+        res.status(200).send({
+            message: 'Payment Removed Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wonr! Please Try Again!'
+        });
+    }
+}
+
+//method to update specific user payment
+module.exports.updateSpecificUserPayment = async (req, res) => {
+    const {
+        fortunes_business_id,
+        payment_id,
+        payment_date,
+        payment_month,
+        payment_year,
+        paid_amount,
+        total_deposit,
+        total_due
+    } = req.body;
+    // console.log(req.body);
+    try {
+        await User.findOneAndUpdate({
+            fortunes_business_id: fortunes_business_id,
+            "payment_status._id": payment_id
+        }, {
+            $set:{
+                "payment_status.$.month_name": payment_month,
+                "payment_status.$.payment_date": payment_date,
+                "payment_status.$.year": payment_year,
+                "payment_status.$.amount": paid_amount,
+                "payment_status.$.total_deposit_amount": total_deposit,
+                "payment_status.$.due_amount": total_due,
+            }
+            
+        });
+        res.status(200).send({
+            message: 'Payment Record Updated Succesfully!'
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            message: 'Something went wonr! Please Try Again!'
+        });
+    }
+}
