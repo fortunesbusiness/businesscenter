@@ -1488,7 +1488,7 @@ module.exports.updateSpecificUserPayment = async (req, res) => {
             fortunes_business_id: fortunes_business_id,
             "payment_status._id": payment_id
         }, {
-            $set:{
+            $set: {
                 "payment_status.$.month_name": payment_month,
                 "payment_status.$.payment_date": payment_date,
                 "payment_status.$.year": payment_year,
@@ -1496,13 +1496,79 @@ module.exports.updateSpecificUserPayment = async (req, res) => {
                 "payment_status.$.total_deposit_amount": total_deposit,
                 "payment_status.$.due_amount": total_due,
             }
-            
+
         });
         res.status(200).send({
             message: 'Payment Record Updated Succesfully!'
         });
     } catch (error) {
         console.log(error);
+        res.status(400).send({
+            message: 'Something went wonr! Please Try Again!'
+        });
+    }
+}
+
+//method to update specific user profit
+module.exports.updateSpecificUserProfit = async (req, res) => {
+    const {
+        fortunes_business_id,
+        profit_id,
+        month,
+        profit_add_date,
+        year,
+        amount,
+        percentage,
+        totalProfit
+    } = req.body;
+    // console.log(req.body);
+    try {
+        await User.findOneAndUpdate({
+            fortunes_business_id: fortunes_business_id,
+            "profit._id": profit_id
+        }, {
+            $set: {
+                "profit.$.month_name": month,
+                "profit.$.amount": amount,
+                "profit.$.year": year,
+                "profit.$.percentage": percentage,
+                "profit.$.total_profit_amount": totalProfit,
+                "profit.$.date": profit_add_date
+            }
+
+        });
+        res.status(200).send({
+            message: 'User Profit Record Updated Succesfully!'
+        });
+    } catch (error) {
+        // console.log(error);
+        res.status(400).send({
+            message: 'Something went wonr! Please Try Again!'
+        });
+    }
+}
+
+//method to pull specific profit
+module.exports.removeSpecificUserProfit = async (req, res) => {
+    const {
+        fortunes_business_id,
+        profit_id
+    } = req.body;
+
+    try {
+        await User.findOneAndUpdate({
+            fortunes_business_id: fortunes_business_id
+        }, {
+            $pull: {
+                profit: {
+                    _id: profit_id
+                }
+            }
+        });
+        res.status(200).send({
+            message: 'Profit Removed Succesfully!'
+        });
+    } catch (error) {
         res.status(400).send({
             message: 'Something went wonr! Please Try Again!'
         });
