@@ -1574,3 +1574,213 @@ module.exports.removeSpecificUserProfit = async (req, res) => {
         });
     }
 }
+
+//method to update specific user specific investment
+module.exports.updateSpecificUserSpecificInvestment = async (req, res) => {
+    const {
+        date,
+        area,
+        amount,
+        month,
+        year,
+        businessId,
+        investment_id
+    } = req.body;
+    // console.log(req.body);
+    try {
+        await User.findOneAndUpdate({
+            fortunes_business_id: businessId,
+            "investment._id": investment_id
+        }, {
+            $set: {
+                "investment.$.month": month,
+                "investment.$.amount": amount,
+                "investment.$.year": year,
+                "investment.$.area": area,
+                "investment.$.date": date
+            }
+
+        });
+        res.status(200).send({
+            message: 'User Investment Record Updated Succesfully!'
+        });
+    } catch (error) {
+        // console.log(error);
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+
+//method to remove specific user specific investment
+module.exports.removeSpecificUserSpecificInvestment = async (req, res) => {
+    const {
+        investment_id,
+        businessId
+    } = req.body;
+
+    try {
+        await User.findOneAndUpdate({
+            fortunes_business_id: businessId
+        }, {
+            $pull: {
+                investment: {
+                    _id: investment_id
+                }
+            }
+        });
+        res.status(200).send({
+            message: 'Investment Removed Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+
+//method to update specific user total investment
+module.exports.updateSpecificUserTotalInvesment = async (req, res) => {
+    const {
+        total,
+        user_id
+    } = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'total_invested_amount': 1});
+    user.total_invested_amount = total;
+    try {
+        await user.save();
+        res.status(200).send({
+            message: 'Total Investment Updated Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+//method to update specific user food investment
+module.exports.updateSpecificUserFoodInvesment = async (req, res) => {
+    const {
+        totalFoodInvestment,
+        user_id
+    } = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'food_investment_amount': 1});
+    user.food_investment_amount = totalFoodInvestment;
+    try {
+        await user.save();
+        res.status(200).send({
+            message: 'Total Food Investment Updated Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+
+//method to update specific user health investment
+module.exports.updateSpecificUserHealthInvesment = async (req, res) => {
+    const {
+        totalHealthInvestment,
+        user_id
+    } = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'health_investment_amount': 1});
+    user.health_investment_amount = totalHealthInvestment;
+    try {
+        await user.save();
+        res.status(200).send({
+            message: 'Total Health Investment Updated Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+
+//method to update specific user vegicle investment
+module.exports.updateSpecificUserVehicleInvesment = async (req, res) => {
+    const {
+        totalVehicleInvestment,
+        user_id
+    } = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'vehicle_investment_amount': 1});
+    user.vehicle_investment_amount = totalVehicleInvestment;
+    try {
+        await user.save();
+        res.status(200).send({
+            message: 'Total Vehicle Investment Updated Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+
+//method to update specific user education investment
+module.exports.updateSpecificUserEducationInvesment = async (req, res) => {
+    const {
+        totalEducationInvestment,
+        user_id
+    } = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'education_investment_amount': 1});
+    user.education_investment_amount = totalEducationInvestment;
+    try {
+        await user.save();
+        res.status(200).send({
+            message: 'Total Education Investment Updated Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+
+//method to update specific user residence investment
+module.exports.updateSpecificUserResidenceInvesment = async (req, res) => {
+    const {
+        totalResidenceInvestment,
+        user_id
+    } = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'residence_investment_amount': 1});
+    user.residence_investment_amount = totalResidenceInvestment;
+    try {
+        await user.save();
+        res.status(200).send({
+            message: 'Total Residence Investment Updated Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+
+//method to update specific user garments investment
+module.exports.updateSpecificUserGarmentsInvesment = async (req, res) => {
+    const {
+        totalGarmentsInvestment,
+        user_id
+    } = req.body;
+
+    const user = await User.findOne({_id: user_id}).select({'garments_investment_amount': 1});
+    user.garments_investment_amount = totalGarmentsInvestment;
+    try {
+        await user.save();
+        res.status(200).send({
+            message: 'Total Residence Investment Updated Succesfully!'
+        });
+    } catch (error) {
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
