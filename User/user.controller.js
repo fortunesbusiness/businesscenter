@@ -352,7 +352,7 @@ module.exports.approveUser = async (req, res) => {
     });
     let businessCenter;
     user.is_approved = true;
-    user.total_share = 1;
+    
     if(user.member_type == 'PREMIUM'){
         businessCenter = await BusinessCenter.findOne({_id: '60436f82b650c1d538a63db0'});
         businessCenter.total_premium_share_sold = Number(businessCenter.total_premium_share_sold) + Number(1);
