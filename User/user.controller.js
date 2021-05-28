@@ -1443,16 +1443,73 @@ module.exports.updateUserNomineeAttachment = async (req, res) => {
 
 }
 
-//method to pull specific payment
+//method to pull specific user payment
 module.exports.removeSpecificUserPayment = async (req, res) => {
     const {
         fortunes_business_id,
-        payment_id
+        payment_id,
+        paid_amount
     } = req.body;
-
+    // console.log(paid_amount);
     try {
-        await User.findOneAndUpdate({
-            fortunes_business_id: fortunes_business_id
+        await deductPaymentAmountFronTotalDepositedAmount(paid_amount);
+        await updateUserDeposit(fortunes_business_id,paid_amount);
+        await updateUserDueAmount(fortunes_business_id,paid_amount);
+        await removeSpecificUserPaymentRecord(fortunes_business_id,payment_id);
+        await res.send({message: 'Payment Removed Succesfully!'});
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+//method to update user deposit amount after removing specific payment
+const updateUserDeposit = async(business_id,paid_amount)=>{
+    const user = await User.findOne({fortunes_business_id: business_id});
+    user.due_amount = Number(user.due_amount) + Number(paid_amount);
+
+    try{
+        await user.save();
+    }
+    catch(error){
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+//method to update user due amount after removing specific payment
+const updateUserDueAmount = async(business_id,paid_amount)=>{
+    const user = await User.findOne({fortunes_business_id: business_id});
+    user.total_deposited_amount = Number(user.total_deposited_amount) - Number(paid_amount);
+
+    try{
+        await user.save();
+    }
+    catch(error){
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+//method to deduct remove payment amount from total deposited amount
+const deductPaymentAmountFronTotalDepositedAmount = async(paid_amount)=>{
+    const businessCenter = await BusinessCenter.findOne({_id: '60436f82b650c1d538a63db0'});
+    businessCenter.total_deposit = Number(businessCenter.total_deposit) - Number(paid_amount);
+
+    try{
+        await businessCenter.save();
+    }
+    catch(error){
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+//method to remove specific user specific payment record
+const removeSpecificUserPaymentRecord = async(business_id,payment_id)=>{
+    await User.findOneAndUpdate({
+            fortunes_business_id: business_id
         }, {
             $pull: {
                 payment_status: {
@@ -1460,14 +1517,6 @@ module.exports.removeSpecificUserPayment = async (req, res) => {
                 }
             }
         });
-        res.status(200).send({
-            message: 'Payment Removed Succesfully!'
-        });
-    } catch (error) {
-        res.status(400).send({
-            message: 'Something went wonr! Please Try Again!'
-        });
-    }
 }
 
 //method to update specific user payment
