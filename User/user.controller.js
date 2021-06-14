@@ -1452,9 +1452,9 @@ module.exports.removeSpecificUserPayment = async (req, res) => {
     } = req.body;
     // console.log(paid_amount);
     try {
-        await deductPaymentAmountFronTotalDepositedAmount(paid_amount);
-        await updateUserDeposit(fortunes_business_id,paid_amount);
-        await updateUserDueAmount(fortunes_business_id,paid_amount);
+        await deductPaidAmountFromTotalDepositedAmount(paid_amount);
+        await addPaidAmountToUserTotalDeposit(fortunes_business_id,paid_amount);
+        await deductPaidAmountFromUserDueAmount(fortunes_business_id,paid_amount);
         await removeSpecificUserPaymentRecord(fortunes_business_id,payment_id);
         await res.send({message: 'Payment Removed Succesfully!'});
     } catch (error) {
@@ -1464,10 +1464,10 @@ module.exports.removeSpecificUserPayment = async (req, res) => {
         });
     }
 }
-//method to update user deposit amount after removing specific payment
-const updateUserDeposit = async(business_id,paid_amount)=>{
+//method to add user paid amount to deposit after removing specific payment
+const addPaidAmountToUserTotalDeposit = async(business_id,amount_difference)=>{
     const user = await User.findOne({fortunes_business_id: business_id});
-    user.due_amount = Number(user.due_amount) + Number(paid_amount);
+    user.total_deposited_amount = Number(user.total_deposited_amount) + Number(amount_difference);
 
     try{
         await user.save();
@@ -1478,10 +1478,37 @@ const updateUserDeposit = async(business_id,paid_amount)=>{
         });
     }
 }
-//method to update user due amount after removing specific payment
-const updateUserDueAmount = async(business_id,paid_amount)=>{
+const deductPaidAmountFromUserTotalDeposit = async(business_id,amount_difference)=>{
     const user = await User.findOne({fortunes_business_id: business_id});
-    user.total_deposited_amount = Number(user.total_deposited_amount) - Number(paid_amount);
+    user.total_deposited_amount = Number(user.total_deposited_amount) - Number(amount_difference);
+
+    try{
+        await user.save();
+    }
+    catch(error){
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+//method to add user paid amount to due amount 
+const addPaidAmountToUserDueAmount = async(business_id,amount_difference)=>{
+    const user = await User.findOne({fortunes_business_id: business_id});
+    user.due_amount = Number(user.due_amount) + Number(amount_difference);
+
+    try{
+        await user.save();
+    }
+    catch(error){
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+//method to deduct user paid amount from due amount after removing specific payment
+const deductPaidAmountFromUserDueAmount = async(business_id,amount_difference)=>{
+    const user = await User.findOne({fortunes_business_id: business_id});
+    user.due_amount = Number(user.due_amount) - Number(amount_difference);
 
     try{
         await user.save();
@@ -1493,9 +1520,23 @@ const updateUserDueAmount = async(business_id,paid_amount)=>{
     }
 }
 //method to deduct remove payment amount from total deposited amount
-const deductPaymentAmountFronTotalDepositedAmount = async(paid_amount)=>{
+const deductPaidAmountFromTotalDepositedAmount = async(amount_difference)=>{
     const businessCenter = await BusinessCenter.findOne({_id: '60436f82b650c1d538a63db0'});
-    businessCenter.total_deposit = Number(businessCenter.total_deposit) - Number(paid_amount);
+    businessCenter.total_deposit = Number(businessCenter.total_deposit) - Number(amount_difference);
+
+    try{
+        await businessCenter.save();
+    }
+    catch(error){
+        res.status(400).send({
+            message: 'Something went wrong! Please Try Again!'
+        });
+    }
+}
+//method to add payment amount from total deposited amount when updating 
+const addPaidAmountToTotalDepositedAmount = async(amount_difference)=>{
+    const businessCenter = await BusinessCenter.findOne({_id: '60436f82b650c1d538a63db0'});
+    businessCenter.total_deposit = Number(businessCenter.total_deposit) + Number(amount_difference);
 
     try{
         await businessCenter.save();
@@ -1532,12 +1573,58 @@ module.exports.updateSpecificUserPayment = async (req, res) => {
         total_due
     } = req.body;
     // console.log(req.body);
-    try {
+    if(req.body.is_new_amount_updated==true && req.body.amount_difference > 0){
+        const amount_difference = req.body.amount_difference;
+        if(req.body.is_to_be_added){
+            // console.log('add');
+            //addition to total deposit and subtract of person total due
+            try{
+                await updateUserSpecificPaymentRecord(fortunes_business_id,payment_id,payment_date,payment_month,payment_year,
+                    paid_amount,total_deposit,total_due);
+                await addPaidAmountToTotalDepositedAmount(amount_difference);
+                await addPaidAmountToUserTotalDeposit(fortunes_business_id,amount_difference);
+                await deductPaidAmountFromUserDueAmount(fortunes_business_id,amount_difference);
+                await res.status(200).send({message: 'Operation successfully done!'});
+            }
+            catch(error){
+                res.status(401).send({message: 'Operation Failed! Please try again!'});
+            }
+            // console.log('Add to total');
+        }else{
+            // console.log('substract');
+            //subtract from total deposit and addition to person total due
+            try{
+                await updateUserSpecificPaymentRecord(fortunes_business_id,payment_id,payment_date,payment_month,payment_year,
+                    paid_amount,total_deposit,total_due);
+                await deductPaidAmountFromTotalDepositedAmount(amount_difference);
+                await deductPaidAmountFromUserTotalDeposit(fortunes_business_id,amount_difference);
+                await addPaidAmountToUserDueAmount(fortunes_business_id,amount_difference);
+                await res.status(200).send({message: 'Operation successfully done!'});
+            }
+            catch(error){
+                res.status(401).send({message: 'Operation Failed! Please try again!'});
+            }
+            
+            // console.log('Substract from total');
+        }
+    }else{
+        await updateUserSpecificPaymentRecord(fortunes_business_id,payment_id,payment_date,payment_month,payment_year,
+            paid_amount,total_deposit,total_due);
+    }
+    // await updateUserSpecificPaymentRecord(fortunes_business_id,payment_id,payment_date,payment_month,payment_year,
+    //     paid_amount,total_deposit,total_due);
+}
+
+//method to update a user payment status
+const updateUserSpecificPaymentRecord = async(
+    fortunes_business_id,payment_id,
+    payment_date,payment_month,payment_year,
+    paid_amount,total_deposit,total_due)=>{
         await User.findOneAndUpdate({
             fortunes_business_id: fortunes_business_id,
             "payment_status._id": payment_id
         }, {
-            $set: {
+            $set:{
                 "payment_status.$.month_name": payment_month,
                 "payment_status.$.payment_date": payment_date,
                 "payment_status.$.year": payment_year,
@@ -1545,17 +1632,8 @@ module.exports.updateSpecificUserPayment = async (req, res) => {
                 "payment_status.$.total_deposit_amount": total_deposit,
                 "payment_status.$.due_amount": total_due,
             }
-
+            
         });
-        res.status(200).send({
-            message: 'Payment Record Updated Succesfully!'
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(400).send({
-            message: 'Something went wonr! Please Try Again!'
-        });
-    }
 }
 
 //method to update specific user profit
