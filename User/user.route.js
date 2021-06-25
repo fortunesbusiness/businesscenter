@@ -60,6 +60,7 @@ router.post('/update/nidimage',verifyAdmin,userController.updateUserNidImage);
 router.post('/remove/payment',verifyAdmin,userController.removeSpecificUserPayment);
 router.post('/update/payment',verifyAdmin,userController.updateSpecificUserPayment);
 router.post('/update/profit',verifyAdmin,userController.updateSpecificUserProfit);
+router.post('/update/totalprofit',verifyAdmin,userController.updateUserTotalProfit);
 router.post('/remove/profit',verifyAdmin,userController.removeSpecificUserProfit);
 router.post('/update/investment',verifyAdmin,userController.updateSpecificUserSpecificInvestment);
 router.post('/remove/investment',verifyAdmin,userController.removeSpecificUserSpecificInvestment);
@@ -70,7 +71,5 @@ router.post('/update/investment/vehicle',verifyAdmin,userController.updateSpecif
 router.post('/update/investment/education',verifyAdmin,userController.updateSpecificUserEducationInvesment);
 router.post('/update/investment/garments',verifyAdmin,userController.updateSpecificUserGarmentsInvesment);
 router.post('/update/investment/residence',verifyAdmin,userController.updateSpecificUserResidenceInvesment);
-
-
 
 module.exports = router;
