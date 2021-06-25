@@ -1635,7 +1635,22 @@ const updateUserSpecificPaymentRecord = async(
             
         });
 }
+//method to update specific user total profit
+module.exports.updateUserTotalProfit = async(req,res)=>{
+    // console.log(req.body);
+    const {_id,totalProfit} = req.body;
+    const user = await User.findOne({_id});
+    user.total_profit = totalProfit;
 
+    try{
+        await user.save();
+        res.status(200).send({message: 'Total Profit Updated succesfully!'});
+    }
+    catch(error){
+        res.status(500).send({message: 'Something went wrong!'});
+        // throw new Error(error);
+    }
+}
 //method to update specific user profit
 module.exports.updateSpecificUserProfit = async (req, res) => {
     const {
@@ -1646,10 +1661,14 @@ module.exports.updateSpecificUserProfit = async (req, res) => {
         year,
         amount,
         percentage,
-        totalProfit
+        totalProfit,
+        isToBeAdd,
+        profitAmountDifference
     } = req.body;
     // console.log(req.body);
     try {
+        if(isToBeAdd) await addToUserTotalProfit(profitAmountDifference,fortunes_business_id);
+        else await substractFromUserTotalProfit(profitAmountDifference,fortunes_business_id);
         await User.findOneAndUpdate({
             fortunes_business_id: fortunes_business_id,
             "profit._id": profit_id
@@ -1660,7 +1679,7 @@ module.exports.updateSpecificUserProfit = async (req, res) => {
                 "profit.$.year": year,
                 "profit.$.percentage": percentage,
                 "profit.$.total_profit_amount": totalProfit,
-                "profit.$.date": profit_add_date
+                "profit.$.issuedate": profit_add_date
             }
 
         });
@@ -1674,15 +1693,40 @@ module.exports.updateSpecificUserProfit = async (req, res) => {
         });
     }
 }
+//method to substract amount from user total profit
+const substractFromUserTotalProfit = async(amount,businessId)=>{
+    const user = await User.findOne({fortunes_business_id: businessId});
+    user.total_profit = Number(user.total_profit) - Number(amount);
 
+    try{
+        await user.save();
+    }
+    catch(error){
+        throw new Error("Something went wrong!");
+    }
+}
+//method to add to amount to total profit
+const addToUserTotalProfit = async(amount,businessId)=>{
+    const user = await User.findOne({fortunes_business_id: businessId});
+    user.total_profit = Number(user.total_profit) + Number(amount);
+
+    try{
+        await user.save();
+    }
+    catch(error){
+        throw new Error("Something went wrong!");
+    }
+}
 //method to pull specific profit
 module.exports.removeSpecificUserProfit = async (req, res) => {
     const {
         fortunes_business_id,
-        profit_id
+        profit_id,
+        profitAmount
     } = req.body;
 
     try {
+        await substractProfit(profitAmount,fortunes_business_id);
         await User.findOneAndUpdate({
             fortunes_business_id: fortunes_business_id
         }, {
@@ -1697,11 +1741,22 @@ module.exports.removeSpecificUserProfit = async (req, res) => {
         });
     } catch (error) {
         res.status(400).send({
-            message: 'Something went wonr! Please Try Again!'
+            message: 'Something went wrong! Please Try Again!'
         });
     }
 }
-
+//method to substract profit from specific user profit
+const substractProfit = async(profitAmount,business_id)=>{
+    const user = await User.findOne({fortunes_business_id: business_id}).select({total_profit: 1});
+    const updatedProfit = Number(user.total_profit) - Number(profitAmount);
+    user.total_profit = updatedProfit;
+    try{
+        await user.save();
+    }
+    catch(error){
+        console.log(error);
+    }
+}
 //method to update specific user specific investment
 module.exports.updateSpecificUserSpecificInvestment = async (req, res) => {
     const {
@@ -1711,31 +1766,69 @@ module.exports.updateSpecificUserSpecificInvestment = async (req, res) => {
         month,
         year,
         businessId,
-        investment_id
+        investment_id,
+        issue_date,
+        isToBeAdd,
+        amountDifference
     } = req.body;
     // console.log(req.body);
-    try {
-        await User.findOneAndUpdate({
-            fortunes_business_id: businessId,
-            "investment._id": investment_id
-        }, {
-            $set: {
-                "investment.$.month": month,
-                "investment.$.amount": amount,
-                "investment.$.year": year,
-                "investment.$.area": area,
-                "investment.$.date": date
-            }
-
-        });
-        res.status(200).send({
-            message: 'User Investment Record Updated Succesfully!'
-        });
-    } catch (error) {
-        // console.log(error);
-        res.status(400).send({
-            message: 'Something went wrong! Please Try Again!'
-        });
+    if(isToBeAdd){
+        try {
+            await addInvestmentAmountToBusinessCenterInvestmentArea(area,amountDifference);
+            await addInvestmentAmountToBusinessCenterTotalInvestment(amountDifference);
+            await addInvestmentAmountToUserInvestmentArea(area,amountDifference,businessId);
+            await addInvestmentAmountToUserTotalInvestment(amountDifference,businessId);
+            await User.findOneAndUpdate({
+                fortunes_business_id: businessId,
+                "investment._id": investment_id
+            }, {
+                $set: {
+                    "investment.$.month": month,
+                    "investment.$.amount": amount,
+                    "investment.$.year": year,
+                    "investment.$.area": area,
+                    "investment.$.date": date,
+                    "investment.$.issue_date": issue_date
+                }
+    
+            });
+            res.status(200).send({
+                message: 'User Investment Record Updated Succesfully!'
+            });
+        } catch (error) {
+            res.status(400).send({
+                message: 'Something went wrong! Please Try Again!'
+            });
+        }
+    }else{
+        try {
+            await substractInvestmentAmountFromBusinessCenterInvestmentArea(area,amountDifference);
+            await substractInvestmentAmountFromBusinessCenterTotalInvestment(amountDifference);
+            await substractInvestmentAmountFromUserInvestmentArea(area,amountDifference,businessId);
+            await substractInvestmentAmountFromUserTotalInvestment(amountDifference,businessId);
+            await User.findOneAndUpdate({
+                fortunes_business_id: businessId,
+                "investment._id": investment_id
+            }, {
+                $set: {
+                    "investment.$.month": month,
+                    "investment.$.amount": amount,
+                    "investment.$.year": year,
+                    "investment.$.area": area,
+                    "investment.$.date": date,
+                    "investment.$.issue_date": issue_date
+                }
+    
+            });
+            res.status(200).send({
+                message: 'User Investment Record Updated Succesfully!'
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(400).send({
+                message: 'Something went wrong! Please Try Again!'
+            });
+        }
     }
 }
 
@@ -1743,10 +1836,16 @@ module.exports.updateSpecificUserSpecificInvestment = async (req, res) => {
 module.exports.removeSpecificUserSpecificInvestment = async (req, res) => {
     const {
         investment_id,
-        businessId
+        businessId,
+        investedAmount,
+        investedArea
     } = req.body;
 
     try {
+        await substractInvestmentAmountFromBusinessCenterInvestmentArea(investedArea,investedAmount);
+        await substractInvestmentAmountFromBusinessCenterTotalInvestment(investedAmount);
+        await substractInvestmentAmountFromUserInvestmentArea(investedArea,investedAmount,businessId);
+        await substractInvestmentAmountFromUserTotalInvestment(investedAmount,businessId);
         await User.findOneAndUpdate({
             fortunes_business_id: businessId
         }, {
@@ -1760,20 +1859,179 @@ module.exports.removeSpecificUserSpecificInvestment = async (req, res) => {
             message: 'Investment Removed Succesfully!'
         });
     } catch (error) {
+        console.log(error);
         res.status(400).send({
             message: 'Something went wrong! Please Try Again!'
         });
     }
 }
-
+//method to substract invested amount from total investment area
+const substractInvestmentAmountFromBusinessCenterInvestmentArea = async(area,amount)=>{
+    let investment;
+    if(area === 'Food'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({foodInvestmentAmount: 1});
+        investment.foodInvestmentAmount = Number(investment.foodInvestmentAmount) - Number(amount);
+    } else if(area === 'Education'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({educationInvestmentAmount: 1});
+        investment.educationInvestmentAmount = Number(investment.educationInvestmentAmount) - Number(amount);
+    } else if(area === 'Cloths/Garments'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({garmentsInvestmentAmount: 1});
+        investment.garmentsInvestmentAmount = Number(businesscenter.garmentsInvestmentAmount) - Number(amount);
+    } else if(area === 'Health'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({healthInvestmentAmount: 1});
+        investment.healthInvestmentAmount = Number(investment.healthInvestmentAmount) - Number(amount);
+    } else if(area === 'Vehicle'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({vehicleInvestmentAmount: 1});
+        investment.vehicleInvestmentAmount = Number(investment.vehicleInvestmentAmount) - Number(amount);
+    } else if(area === 'Residence'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({residenceInvestmentAmount: 1});
+        investment.residenceInvestmentAmount = Number(investment.residenceInvestmentAmount) - Number(amount);
+    }
+    try{
+        await investment.save();
+    }
+    catch(error){
+        throw new error("Operation Failed!");
+    }
+}
+//method to add invested amount to business center total investment area
+const addInvestmentAmountToBusinessCenterInvestmentArea = async(area,amount)=>{
+    let investment;
+    if(area === 'Food'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({foodInvestmentAmount: 1});
+        investment.foodInvestmentAmount = Number(investment.foodInvestmentAmount) + Number(amount);
+    } else if(area === 'Education'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({educationInvestmentAmount: 1});
+        investment.educationInvestmentAmount = Number(investment.educationInvestmentAmount) + Number(amount);
+    } else if(area === 'Cloths/Garments'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({garmentsInvestmentAmount: 1});
+        investment.garmentsInvestmentAmount = Number(businesscenter.garmentsInvestmentAmount) + Number(amount);
+    } else if(area === 'Health'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({healthInvestmentAmount: 1});
+        investment.healthInvestmentAmount = Number(investment.healthInvestmentAmount) + Number(amount);
+    } else if(area === 'Vehicle'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({vehicleInvestmentAmount: 1});
+        investment.vehicleInvestmentAmount = Number(investment.vehicleInvestmentAmount) + Number(amount);
+    } else if(area === 'Residence'){
+        investment = await Investment.findOne({id: 'businessCenter22'}).select({residenceInvestmentAmount: 1});
+        investment.residenceInvestmentAmount = Number(investment.residenceInvestmentAmount) + Number(amount);
+    }
+    try{
+        await investment.save();
+    }
+    catch(error){
+        throw new error("Operation Failed!");
+    }
+}
+//method to substract investment amount from business center total investment amount
+const substractInvestmentAmountFromBusinessCenterTotalInvestment = async(amount)=>{
+    const investment = await Investment.findOne({id: 'businessCenter22'}).select({totalInvestment: 1});
+    investment.totalInvestment = Number(investment.totalInvestment) - Number(amount);
+    try{
+        await investment.save();
+    }
+    catch(error){
+        throw new error("Operation Failed!");
+    }
+}
+//method to add investment amount from business center total investment amount
+const addInvestmentAmountToBusinessCenterTotalInvestment = async(amount)=>{
+    const investment = await Investment.findOne({id: 'businessCenter22'}).select({totalInvestment: 1});
+    investment.totalInvestment = Number(investment.totalInvestment) + Number(amount);
+    try{
+        await investment.save();
+    }
+    catch(error){
+        throw new error("Operation Failed!");
+    }
+}
+//method to substract invested amount from specific investment area
+const substractInvestmentAmountFromUserInvestmentArea = async(area,amount,businessId)=>{
+    let user;
+    if(area === 'Food'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({food_investment_amount: 1});
+        user.food_investment_amount = Number(user.food_investment_amount) - Number(amount);
+    } else if(area === 'Education'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({education_investment_amount: 1});
+        user.education_investment_amount = Number(user.education_investment_amount) - Number(amount);
+    } else if(area === 'Cloths/Garments'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({garments_investment_amount: 1});
+        user.garments_investment_amount = Number(user.garments_investment_amount) - Number(amount);
+    } else if(area === 'Health'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({health_investment_amount: 1});
+        user.health_investment_amount = Number(user.health_investment_amount) - Number(amount);
+    } else if(area === 'Vehicle'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({vehicle_investment_amount: 1});
+        user.vehicle_investment_amount = Number(user.vehicle_investment_amount) - Number(amount);
+    } else if(area === 'Residence'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({residence_investment_amount: 1});
+        user.residence_investment_amount = Number(user.residence_investment_amount) - Number(amount);
+    }
+    try{
+        await user.save();
+    }
+    catch(error){
+        throw new error("Operation Failed!");
+    }
+}
+//method to add invested amount to user specific investment area
+const addInvestmentAmountToUserInvestmentArea = async(area,amount,businessId)=>{
+    let user;
+    if(area === 'Food'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({food_investment_amount: 1});
+        user.food_investment_amount = Number(user.food_investment_amount) + Number(amount);
+    } else if(area === 'Education'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({education_investment_amount: 1});
+        user.education_investment_amount = Number(user.education_investment_amount) + Number(amount);
+    } else if(area === 'Cloths/Garments'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({garments_investment_amount: 1});
+        user.garments_investment_amount = Number(user.garments_investment_amount) + Number(amount);
+    } else if(area === 'Health'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({health_investment_amount: 1});
+        user.health_investment_amount = Number(user.health_investment_amount) + Number(amount);
+    } else if(area === 'Vehicle'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({vehicle_investment_amount: 1});
+        user.vehicle_investment_amount = Number(user.vehicle_investment_amount) + Number(amount);
+    } else if(area === 'Residence'){
+        user = await User.findOne({fortunes_business_id: businessId}).select({residence_investment_amount: 1});
+        user.residence_investment_amount = Number(user.residence_investment_amount) + Number(amount);
+    }
+    try{
+        await user.save();
+    }
+    catch(error){
+        throw new error("Operation Failed!");
+    }
+}
+//method to substract investment amount from user total investment
+const substractInvestmentAmountFromUserTotalInvestment = async(amount,businessId)=>{
+    const user = await User.findOne({fortunes_business_id: businessId}).select({total_invested_amount: 1});
+    user.total_invested_amount = Number(user.total_invested_amount) - Number(amount);
+    try{
+        await user.save();
+    }
+    catch(error){
+        throw new error("Operation Failed!");
+    }
+}
+//method to add investment amount to user total investment
+const addInvestmentAmountToUserTotalInvestment = async(amount,businessId)=>{
+    const user = await User.findOne({fortunes_business_id: businessId}).select({total_invested_amount: 1});
+    user.total_invested_amount = Number(user.total_invested_amount) + Number(amount);
+    try{
+        await user.save();
+    }
+    catch(error){
+        throw new error("Operation Failed!");
+    }
+}
 //method to update specific user total investment
 module.exports.updateSpecificUserTotalInvesment = async (req, res) => {
     const {
         total,
-        user_id
+        businessId
     } = req.body;
-
-    const user = await User.findOne({_id: user_id}).select({'total_invested_amount': 1});
+    const user = await User.findOne({fortunes_business_id: businessId}).select({'total_invested_amount': 1});
     user.total_invested_amount = total;
     try {
         await user.save();
@@ -1790,10 +2048,10 @@ module.exports.updateSpecificUserTotalInvesment = async (req, res) => {
 module.exports.updateSpecificUserFoodInvesment = async (req, res) => {
     const {
         totalFoodInvestment,
-        user_id
+        businessId
     } = req.body;
 
-    const user = await User.findOne({_id: user_id}).select({'food_investment_amount': 1});
+    const user = await User.findOne({fortunes_business_id: businessId}).select({'food_investment_amount': 1});
     user.food_investment_amount = totalFoodInvestment;
     try {
         await user.save();
@@ -1811,10 +2069,10 @@ module.exports.updateSpecificUserFoodInvesment = async (req, res) => {
 module.exports.updateSpecificUserHealthInvesment = async (req, res) => {
     const {
         totalHealthInvestment,
-        user_id
+        businessId
     } = req.body;
 
-    const user = await User.findOne({_id: user_id}).select({'health_investment_amount': 1});
+    const user = await User.findOne({fortunes_business_id: businessId}).select({'health_investment_amount': 1});
     user.health_investment_amount = totalHealthInvestment;
     try {
         await user.save();
@@ -1832,10 +2090,10 @@ module.exports.updateSpecificUserHealthInvesment = async (req, res) => {
 module.exports.updateSpecificUserVehicleInvesment = async (req, res) => {
     const {
         totalVehicleInvestment,
-        user_id
+        businessId
     } = req.body;
 
-    const user = await User.findOne({_id: user_id}).select({'vehicle_investment_amount': 1});
+    const user = await User.findOne({fortunes_business_id: businessId}).select({'vehicle_investment_amount': 1});
     user.vehicle_investment_amount = totalVehicleInvestment;
     try {
         await user.save();
@@ -1853,10 +2111,10 @@ module.exports.updateSpecificUserVehicleInvesment = async (req, res) => {
 module.exports.updateSpecificUserEducationInvesment = async (req, res) => {
     const {
         totalEducationInvestment,
-        user_id
+        businessId
     } = req.body;
 
-    const user = await User.findOne({_id: user_id}).select({'education_investment_amount': 1});
+    const user = await User.findOne({fortunes_business_id: businessId}).select({'education_investment_amount': 1});
     user.education_investment_amount = totalEducationInvestment;
     try {
         await user.save();
@@ -1874,10 +2132,10 @@ module.exports.updateSpecificUserEducationInvesment = async (req, res) => {
 module.exports.updateSpecificUserResidenceInvesment = async (req, res) => {
     const {
         totalResidenceInvestment,
-        user_id
+        businessId
     } = req.body;
 
-    const user = await User.findOne({_id: user_id}).select({'residence_investment_amount': 1});
+    const user = await User.findOne({fortunes_business_id: businessId}).select({'residence_investment_amount': 1});
     user.residence_investment_amount = totalResidenceInvestment;
     try {
         await user.save();
@@ -1895,10 +2153,10 @@ module.exports.updateSpecificUserResidenceInvesment = async (req, res) => {
 module.exports.updateSpecificUserGarmentsInvesment = async (req, res) => {
     const {
         totalGarmentsInvestment,
-        user_id
+        businessId
     } = req.body;
 
-    const user = await User.findOne({_id: user_id}).select({'garments_investment_amount': 1});
+    const user = await User.findOne({fortunes_business_id: businessId}).select({'garments_investment_amount': 1});
     user.garments_investment_amount = totalGarmentsInvestment;
     try {
         await user.save();
